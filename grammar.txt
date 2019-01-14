@@ -1,65 +1,110 @@
 program : definition
         | definition program
 
-definition : var_def
-           | class_def
-           | function_def
-
-var_def: VAR IDENTIFIER
-
-class_def: class_header LEFT_CURLY class_body RIGHT_CURLY
-class_header: CLASS IDENTIFIER | CLASS IDENTIFIER EXTENDS IDENTIFIER
-class_body: member_def | member_def class_body
-member_def: var_def | function_def
-
-
-function_def: IDENTIFIER LEFT_PAREN optParamsList RIGHT_PAREN block
-optParamsList: NONE | paramsList
-paramsList: IDENTIFIER | IDENTIFIER COMMA paramsList
+definition : classDef
+           | varDef
 
 
 
+classDef : CLASS IDENTIFIER optExtension LEFT_CURLY classBody RIGHT_CURLY
 
-block: LEFT_CURLY optStatements RIGHT_CURLY
-optStatements: NONE | statements
-statements: statement | statement statements
-statement: cond_block
-         | while_block
-         | expression SEMICOLON
-         | function_def SEMICOLON
-expression: unary | unary operator expression
-operator: PLUS | TIMES | MINUS | DIV | MOD | LT | LTE | EQ | GTE | GT | GETS
+optExtension : NONE
+             | EXTENDS IDENTIFIER
+
+classBody : varDef
+          | varDef classBody
+
+
+
+varDef : VAR IDENTIFIER optAssignment SEMICOLON
+       | functionDef
+
+optAssignment : NONE
+              | ASSIGN expression
+
+
+
+functionDef : IDENTIFIER functionSig block
+
+functionSig : LEFT_PAREN optParamsList RIGHT_PAREN
+
+optParamsList : NONE
+              | paramsList
+
+paramsList : IDENTIFIER
+           | IDENTIFIER COMMA paramsList
+
+block : LEFT_CURLY optStatements RIGHT_CURLY
+      | statement
+
+
+
+
+optStatements : NONE
+              | statements
+
+statements : statement
+           | statement statements
+
+statement : condBlock
+          | whileBlock
+          | expression  SEMICOLON
+          | varDef      SEMICOLON
+          | functionDef SEMICOLON
+          | returnStatement
+
+
+condStatement : IF condition block |
+              : IF condition block ELSE block
+
+whileHeader : WHILE condition block
+
+condition : LEFT_PAREN expression RIGHT_PAREN
+
+returnStatement : RETURN expression SEMICOLON
+                | RETURN SEMICOLON
+
+
+
+
+expression : unary
+           | unary operator expression
 
 unary: MINUS unary
-     | function_call
-     | IDENTIFIER
-     | INTEGER
-     | string
+     | LEFT_PAREN expression RIGHT_PAREN
+     | functionCall
      | array
-     | array_element
+     | arrayElement
      | closure
+     | variable
+     | INTEGER
+     | STRING
 
-function_call: IDENTIFIER LEFT_PAREN optExprList RIGHT_PAREN
-optExprList: NONE | exprList
-exprList: expression | expression COMMA exprList
+functionCall : variable LEFT_PAREN optExprList RIGHT_PAREN
 
-string: LEFT_QUOTE opt_tokens RIGHT_QUOTE
-opt_tokens: NONE | tokens
-tokens: TOKEN | TOKEN tokens
+optExprList : NONE
+            | exprList
 
-array: LEFT_CURLY exprList RIGHT_CURLY
-array_element: IDENTIFIER LEFT_BRACK INTEGER RIGHT_BRACK
+exprList : expression
+         | expression COMMA exprList
 
-closure: closure_header block | closure_header expression
-closure_header: LEFT_PAREN optParamsList RIGHT_PAREN ARROW
+array : LEFT_CURLY exprList RIGHT_CURLY
 
-cond_block: if_statement opt_else_statement
+arrayElement : IDENTIFIER LEFT_BRACK INTEGER RIGHT_BRACK
 
-if_statement: if_header block | if_header statement
-if_header: IF LEFT_PAREN expression RIGHT_PAREN
+closure : functionSig ARROW block
 
-opt_else_statement: NONE | else_statement
-else_statement: ELSE block | ELSE statement
+variable: IDENTIFIER
+        | IDENTIFIER DOT variable
 
-while_block: while_header block | while_header statement
-while_header: WHILE LEFT_PAREN expression RIGHT_PAREN
+operator : PLUS
+         | TIMES
+         | MINUS
+         | DIV
+         | MOD
+         | LT
+         | LTE
+         | EQ
+         | GTE
+         | GT
+         | ASSIGN
