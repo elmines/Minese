@@ -5,7 +5,6 @@ definition : classDef
            | varDef
 
 
-
 classDef : CLASS IDENTIFIER optExtension LEFT_CURLY classBody RIGHT_CURLY
 
 optExtension : NONE
@@ -24,15 +23,15 @@ optAssignment : NONE
 
 
 
-functionDef : IDENTIFIER functionSig block
+functionDef : DEFINE IDENTIFIER functionSig block
 
 functionSig : LEFT_PAREN optParamsList RIGHT_PAREN
 
 optParamsList : NONE
               | paramsList
 
-paramsList : IDENTIFIER
-           | IDENTIFIER COMMA paramsList
+paramsList : VAR IDENTIFIER
+           | VAR IDENTIFIER COMMA paramsList
 
 block : LEFT_CURLY optStatements RIGHT_CURLY
       | statement
@@ -75,12 +74,12 @@ unary: MINUS unary
      | functionCall
      | array
      | arrayElement
-     | closure
-     | variable
+     | lambda
+     | IDENTIFIER
      | INTEGER
      | STRING
 
-functionCall : variable LEFT_PAREN optExprList RIGHT_PAREN
+functionCall : unary LEFT_PAREN optExprList RIGHT_PAREN
 
 optExprList : NONE
             | exprList
@@ -90,12 +89,9 @@ exprList : expression
 
 array : LEFT_CURLY exprList RIGHT_CURLY
 
-arrayElement : IDENTIFIER LEFT_BRACK INTEGER RIGHT_BRACK
+arrayElement : IDENTIFIER LEFT_BRACK expression RIGHT_BRACK
 
-closure : functionSig ARROW block
-
-variable: IDENTIFIER
-        | IDENTIFIER DOT variable
+lambda : functionSig block
 
 operator : PLUS
          | TIMES
@@ -104,7 +100,9 @@ operator : PLUS
          | MOD
          | LT
          | LTE
+	 | NEQ
          | EQ
          | GTE
          | GT
          | ASSIGN
+         | DOT
