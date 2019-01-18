@@ -3,6 +3,7 @@ program : definition
 
 definition : classDef
            | varDef
+           | functionDef
 
 
 classDef : CLASS IDENTIFIER optExtension OCURLY classBody CCURLY
@@ -16,7 +17,6 @@ classBody : varDef
 
 
 varDef : VAR IDENTIFIER optAssignment SEMICOLON
-       | functionDef
 
 optAssignment : NONE
               | ASSIGN expression
@@ -33,11 +33,10 @@ optParamsList : NONE
 paramsList : VAR IDENTIFIER
            | VAR IDENTIFIER COMMA paramsList
 
+
+
 block : OCURLY optStatements CCURLY
       | statement
-
-
-
 
 optStatements : NONE
               | statements
@@ -89,7 +88,7 @@ exprList : expression
 
 array : OCURLY exprList CCURLY
 
-arrayElement : IDENTIFIER OBRACK expression CBRACK
+arrayElement : expression OBRACK expression CBRACK
 
 lambda : functionSig block
 

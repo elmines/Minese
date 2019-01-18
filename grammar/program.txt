@@ -9,10 +9,9 @@ class Rectangle {
 	var width;
 	var height;
 
-	//Var keyword not required for constructors
-	define constructor(var width, var height) {
-		this.width = width;
-		this.height = height;
+	define constructor(var w, var h) {
+		width = w;
+		height = h ;
 	}
 
 	define perimeter() {
@@ -20,9 +19,10 @@ class Rectangle {
 	}
 
 	//A block can be a single statement, for functions, loops, and conditional statements
-	define area() return this.width * this.height;
+	define area() return width * height;
 
 	define debug() {
+		if (veryScaryGlobal < 0) return; //Return statements without a value
 		print(width);
 		print(height);
 	}
@@ -33,9 +33,6 @@ class Square extends Rectangle {
 
 	define constructor(var sideLength) {
 		super(sideLength, sideLength);
-
-		this.width = sideLength;
-		this.height = sideLength;
 	}
 
 }
@@ -46,19 +43,17 @@ main(args) {
 	var x = 42;
 	var y = "Minese is a rather conventional language";
 	var z;
-
 	var classroom = Rectangle(10, 4);
- 	
 
-	//Declare an anonymous function
+	//Define an anonymous function
 	var isEven = (var rectangle) {
 		if (rectangle.area() % 2 == 0) return true;
 		else                           return false;
 	}
 	print(isEven(classroom))
 
-	//Declare a locally scoped function
-	var pow(var base, var exp) {
+	//Define a local function
+	define pow(var base, var exp) {
 		var result = 1;
 		var i = 0;
 		while (i < exp) {
@@ -68,7 +63,7 @@ main(args) {
 		return result;
 	}
 
-	//Declare a local class
+	//Define a local class
 	class Triangle {
 		var a; var b; var c;
 		define constructor(a, b, c) {
@@ -79,7 +74,7 @@ main(args) {
 	}	
 
 	//CONDITIONALS
-	if ( x < 0 )
+	if (x < 0)
 		z = "Negative"; //A block can be a single statement
 	else if (x == 0) {
 		x = x + 1;
@@ -87,7 +82,7 @@ main(args) {
 	}
 	else if (x == 42) {
 		z = "The answer to life, the universe, and everything."
-		return 0; //Return statements anywhere!
+		return 0; //Return from anywhere
 	}
 	else z = "Positive";
 
@@ -113,10 +108,10 @@ main(args) {
 	}
 
 
-	var grade = -pow(x, 2) + (y = 3) + (3 - 6 + 5 % 2);
+	var arithmetic = -pow(x, 2) + (y = 3) + (3 - 6 + 5 % 2);
 	3; //Any expresion followed by a semicolon is valid
 
-	var linesOfCode = 123;
+	var linesOfCode = 118;
 	var softwareIsWellWritten = (linesOfCode > 100) && !(linesofCode > 2000);
 
 	return 0;
