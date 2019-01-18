@@ -19,7 +19,7 @@ class Rectangle {
 		return (2 * width) + (2 * height);
 	}
 
-	//A block can be a single statement, for functions and conditional statements
+	//A block can be a single statement, for functions, loops, and conditional statements
 	define area() return this.width * this.height;
 
 	define debug() {
@@ -42,46 +42,19 @@ class Square extends Rectangle {
 
 main(args) {
 
+	//LOCAL DEFINITIONS
 	var x = 42;
 	var y = "Minese is a rather conventional language";
 	var z;
 
- 	
-	if ( x < 0 )
-		z = "Negative"; //A block can be a single statement
-	else if (x == 0) {
-		x = x + 1;
-		z = "Zero";
-	}
-	else if (x == 42) {
-		z = "The answer to life, the universe, and everything."
-		return 0;
-	}
-	else z = "Positive";
-
-
-	var i = 1;
-	while (i < x) {
-		i = i * 2;
-		print(i);
-	}	
-
-	var comparisions = {1 < 1, 1 <= 1, 1 != 1, 1 == 1, 1 >= 1, 1 > 1};
-	var ops = {1 + 1, 1 - 1, 1 * 1, 1 / 1, 1 % 1};
-	var i = -1;
-	while (i < ops.length - 1) {
-		print(ops[i+1]); //An array index can be an expression
-		i = i + 1;
-	}
-
 	var classroom = Rectangle(10, 4);
+ 	
 
 	//Declare an anonymous function
 	var isEven = (var rectangle) {
 		if (rectangle.area() % 2 == 0) return true;
 		else                           return false;
 	}
-
 	print(isEven(classroom))
 
 	//Declare a locally scoped function
@@ -95,7 +68,56 @@ main(args) {
 		return result;
 	}
 
-	var x = -pow(x, 2) + (y = 3) + (3 - 6 + 5 % 2);
+	//Declare a local class
+	class Triangle {
+		var a; var b; var c;
+		define constructor(a, b, c) {
+			this.a = a;
+			this.b = b;
+			this.c = c;
+		}
+	}	
+
+	//CONDITIONALS
+	if ( x < 0 )
+		z = "Negative"; //A block can be a single statement
+	else if (x == 0) {
+		x = x + 1;
+		z = "Zero";
+	}
+	else if (x == 42) {
+		z = "The answer to life, the universe, and everything."
+		return 0; //Return statements anywhere!
+	}
+	else z = "Positive";
+
+	var doStuff = false;
+	if (doStuff) {
+		print("Boolean variables are convenient!");
+	}
+
+
+	//LOOPING
+	var i = 1;
+	while (i < x) {
+		i = i * 2;
+		print(i);
+	}	
+
+	//ARRAYS
+	var primes = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29};
+	var i = -1;
+	while (i < primes.length - 1) {
+		print(primes[i+1]); //An array index can be an expression
+		i = i + 1;
+	}
+
+
+	var grade = -pow(x, 2) + (y = 3) + (3 - 6 + 5 % 2);
+	3; //Any expresion followed by a semicolon is valid
+
+	var linesOfCode = 123;
+	var softwareIsWellWritten = (linesOfCode > 100) && !(linesofCode > 2000);
 
 	return 0;
 }

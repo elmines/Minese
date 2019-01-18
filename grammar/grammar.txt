@@ -5,7 +5,7 @@ definition : classDef
            | varDef
 
 
-classDef : CLASS IDENTIFIER optExtension LEFT_CURLY classBody RIGHT_CURLY
+classDef : CLASS IDENTIFIER optExtension OCURLY classBody CCURLY
 
 optExtension : NONE
              | EXTENDS IDENTIFIER
@@ -25,7 +25,7 @@ optAssignment : NONE
 
 functionDef : DEFINE IDENTIFIER functionSig block
 
-functionSig : LEFT_PAREN optParamsList RIGHT_PAREN
+functionSig : OPAREN optParamsList CPAREN
 
 optParamsList : NONE
               | paramsList
@@ -33,7 +33,7 @@ optParamsList : NONE
 paramsList : VAR IDENTIFIER
            | VAR IDENTIFIER COMMA paramsList
 
-block : LEFT_CURLY optStatements RIGHT_CURLY
+block : OCURLY optStatements CCURLY
       | statement
 
 
@@ -48,8 +48,7 @@ statements : statement
 statement : condBlock
           | whileBlock
           | expression  SEMICOLON
-          | varDef      SEMICOLON
-          | functionDef SEMICOLON
+          | definition
           | returnStatement
 
 
@@ -58,7 +57,7 @@ condStatement : IF condition block |
 
 whileHeader : WHILE condition block
 
-condition : LEFT_PAREN expression RIGHT_PAREN
+condition : OPAREN expression CPAREN
 
 returnStatement : RETURN expression SEMICOLON
                 | RETURN SEMICOLON
@@ -69,17 +68,18 @@ returnStatement : RETURN expression SEMICOLON
 expression : unary
            | unary operator expression
 
-unary: MINUS unary
-     | LEFT_PAREN expression RIGHT_PAREN
+unary: UMINUS unary
+     | OPAREN expression CPAREN
      | functionCall
      | array
      | arrayElement
      | lambda
      | IDENTIFIER
+     | boolean
      | INTEGER
      | STRING
 
-functionCall : unary LEFT_PAREN optExprList RIGHT_PAREN
+functionCall : unary OPAREN optExprList CPAREN
 
 optExprList : NONE
             | exprList
@@ -87,11 +87,14 @@ optExprList : NONE
 exprList : expression
          | expression COMMA exprList
 
-array : LEFT_CURLY exprList RIGHT_CURLY
+array : OCURLY exprList CCURLY
 
-arrayElement : IDENTIFIER LEFT_BRACK expression RIGHT_BRACK
+arrayElement : IDENTIFIER OBRACK expression CBRACK
 
 lambda : functionSig block
+
+boolean : TRUE
+        | FALSE
 
 operator : PLUS
          | TIMES
@@ -106,3 +109,6 @@ operator : PLUS
          | GT
          | ASSIGN
          | DOT
+         | AND
+         | OR
+         | NOT
