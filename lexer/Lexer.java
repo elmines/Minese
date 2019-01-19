@@ -31,13 +31,19 @@ public class Lexer {
 			case '*': return new Lexeme(Type.TIMES);
 			case '/': return new Lexeme(Type.DIV);
 			case '%': return new Lexeme(Type.MOD);
-			case '<': return new Lexeme(Type.LT);
-			case '>': return new Lexeme(Type.GT);
-			case '=': return new Lexeme(Type.ASSIGN);
+
+			case '<':
+			case '>':
+			case '!':
+			case '=':
+				this.unread(this.ch);
+				return lexCmpOperator();
+
 			case '.': return new Lexeme(Type.DOT);
 			case '&': return new Lexeme(Type.AND);
 			case '|': return new Lexeme(Type.OR);
-			case '!': return new Lexeme(Type.NOT);
+			case ',': return new Lexeme(Type.COMMA);
+			case ';': return new Lexeme(Type.SEMICOLON);
 
 
 			default:
@@ -45,10 +51,69 @@ public class Lexer {
 					this.unread(this.ch);
 					return lexNumber();
 				}
+				else if (Character.isLetter(this.ch)) {
+					this.unread(this.ch);
+					return lexWord();
+				}
+				else return new Lexeme(Type.UNKNOWN, new String(new char[]{this.ch}));
 
 		}
+	}
 
-		return new Lexeme(Type.EOF);
+	private Lexeme lexCmpOperator() {
+		StringBuilder chars = new StringBuilder();
+		char first = (char) this.readByte();
+
+		int second = this.readByte();
+
+		if ( ((char) second) == '=' ) {
+			this.ch = (char) second;
+			switch (first) {
+				case '<': return new Lexeme(Type.LTE);
+				case '>': return new Lexeme(Type.GTE);
+				case '=': return new Lexeme(Type.EQ);
+				case '!': return new Lexeme(Type.NEQ);
+				default:  return new Lexeme(Type.UNKNOWN, new String(new char[]{first, (char) second}));
+			}
+		}
+		this.unread(second);
+
+		switch(first) {
+			case '<': return new Lexeme(Type.LT);
+			case '>': return new Lexeme(Type.GT);
+			case '=': return new Lexeme(Type.ASSIGN);
+			case '!': return new Lexeme(Type.NOT);
+			default: return new Lexeme(Type.UNKNOWN, new String(new char[]{first}));
+		}
+
+	}
+
+	private Lexeme lexWord() {
+
+		StringBuilder chars = new StringBuilder();
+		int next = this.readByte();
+
+		while (Character.isLetterOrDigit(next)) {
+			chars.append((char) next);
+			next = this.readByte();
+		}
+		this.unread(next);
+
+		String word = chars.toString();
+		switch (word) {
+			case "if": return new Lexeme(Type.IF);
+			case "else": return new Lexeme(Type.ELSE);
+			case "while": return new Lexeme(Type.WHILE);
+			case "var": return new Lexeme(Type.VAR);
+			case "define": return new Lexeme(Type.DEFINE);
+			case "class": return new Lexeme(Type.CLASS);
+			case "extends": return new Lexeme(Type.EXTENDS);
+			case "return": return new Lexeme(Type.RETURN);
+			case "true": return new Lexeme(Type.BOOLEAN, true);
+			case "false": return new Lexeme(Type.BOOLEAN, false);
+
+			default: return new Lexeme(Type.IDENTIFIER, word);
+		}
 	}
 
 	private Lexeme lexNumber() {
