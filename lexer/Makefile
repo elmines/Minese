@@ -18,10 +18,10 @@ test4: scanner
 test5: scanner
 	java Scanner test5.min
 
-Scanner.class: Scanner.java Lexer.class
+Scanner.class: Scanner.java Lexer.class LexException.class
 	$(COMP) $(OPTS) Scanner.java
 
-Lexer.class: Lexer.java Lexeme.class Type.class
+Lexer.class: Lexer.java Lexeme.class Type.class LexException.class
 	$(COMP) $(OPTS) Lexer.java
 
 Lexeme.class: Lexeme.java Type.class
@@ -30,6 +30,8 @@ Lexeme.class: Lexeme.java Type.class
 Type.class: Type.java
 	$(COMP) $(OPTS) Type.java
 
+LexException.class: LexException.java
+	$(COMP) $(OPTS) LexException.java
 
 clean:
 	rm *.class

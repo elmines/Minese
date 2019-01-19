@@ -9,11 +9,12 @@ public class Lexer {
 		this.in = in;
 		this.lineNumber = 1;
 		this.ch = ( (char) -1 );
+		this.prevLine = null;
+		this.currLine = new StringBuilder();
 	}
 
-	public Lexeme lex() {
+	public Lexeme lex() throws LexException{
 
-		this.ch = (char) this.readByte();
 		skipWhitespace();
 
 
@@ -36,7 +37,7 @@ public class Lexer {
 			case '>':
 			case '!':
 			case '=':
-				this.unread(this.ch);
+				this.unread();
 				return lexCmpOperator();
 
 			case '.': return new Lexeme(Type.DOT);
@@ -48,42 +49,42 @@ public class Lexer {
 
 			default:
 				if (Character.isDigit(this.ch)) {
-					this.unread(this.ch);
+					this.unread();
 					return lexNumber();
 				}
 				else if (Character.isLetter(this.ch)) {
-					this.unread(this.ch);
+					this.unread();
 					return lexWord();
 				}
-				else return new Lexeme(Type.UNKNOWN, new String(new char[]{this.ch}));
+				else {
+					throwException("Unknown character "+this.ch);
+					return new Lexeme(Type.UNKNOWN, new String(new char[]{this.ch}));
+				}
 
 		}
 	}
 
 	private Lexeme lexCmpOperator() {
-		StringBuilder chars = new StringBuilder();
-		char first = (char) this.readByte();
+		this.readChar();
+		char first = this.ch;
+		this.readChar();
+		char second = this.ch;
 
-		int second = this.readByte();
-
-		if ( ((char) second) == '=' ) {
-			this.ch = (char) second;
-			switch (first) {
-				case '<': return new Lexeme(Type.LTE);
-				case '>': return new Lexeme(Type.GTE);
-				case '=': return new Lexeme(Type.EQ);
-				case '!': return new Lexeme(Type.NEQ);
-				default:  return new Lexeme(Type.UNKNOWN, new String(new char[]{first, (char) second}));
-			}
-		}
-		this.unread(second);
-
-		switch(first) {
-			case '<': return new Lexeme(Type.LT);
-			case '>': return new Lexeme(Type.GT);
-			case '=': return new Lexeme(Type.ASSIGN);
-			case '!': return new Lexeme(Type.NOT);
-			default: return new Lexeme(Type.UNKNOWN, new String(new char[]{first}));
+		switch (first) {
+			case '<':
+				if (second == '=') return new Lexeme(Type.LTE);
+				else               this.unread(); return new Lexeme(Type.LT);
+			case '>':
+				if (second == '=') return new Lexeme(Type.GTE);
+				else               this.unread(); return new Lexeme(Type.GT);
+			case '=':
+				if (second == '=') return new Lexeme(Type.EQ);
+				else               this.unread(); return new Lexeme(Type.ASSIGN);
+			case '!':
+				if (second == '=') return new Lexeme(Type.NEQ);
+				else               this.unread(); return new Lexeme(Type.NOT);
+			default:
+				return new Lexeme(Type.UNKNOWN, new String(new char[]{first}));
 		}
 
 	}
@@ -91,13 +92,12 @@ public class Lexer {
 	private Lexeme lexWord() {
 
 		StringBuilder chars = new StringBuilder();
-		int next = this.readByte();
-
-		while (Character.isLetterOrDigit(next)) {
-			chars.append((char) next);
-			next = this.readByte();
+		this.readChar();
+		while (Character.isLetterOrDigit(this.ch)) {
+			chars.append(this.ch);
+			this.readChar();
 		}
-		this.unread(next);
+		this.unread();
 
 		String word = chars.toString();
 		switch (word) {
@@ -118,12 +118,13 @@ public class Lexer {
 
 	private Lexeme lexNumber() {
 		StringBuilder digits = new StringBuilder();
-		int next = this.readByte();
-		while (Character.isDigit(next)) {
-			digits.append((char) next);
-			next = this.readByte();
+
+		readChar();
+		while (Character.isDigit(this.ch)) {
+			digits.append(this.ch);
+			readChar();
 		}
-		this.unread(next);
+		this.unread();
 
 		return new Lexeme(Type.INTEGER, Integer.parseInt(digits.toString()));
 	}
@@ -131,67 +132,131 @@ public class Lexer {
 	/**
 	 * After execution, the input stream points to the first non-whitespace, non-comment byte
 	 */
-	private void skipWhitespace() {
+	private void skipWhitespace() throws LexException{
 
+		readChar();
 		while ( Character.isWhitespace(this.ch) || this.ch == '/' ) {
-			if (this.ch == '/') {
-				char prev = this.ch;
-				char next = (char) this.readByte();
 
-				switch(next) {
-					case '/': skipLineComment(); break;
+			if (this.ch == '/') {
+				readChar();
+
+				switch(this.ch) {
+					case '/': consumeLine(); break;
 					case '*': skipBlockComment(); break;
-					default:
-						this.ch = prev;
-						this.unread(next);
-						return;
+					default: this.unread(); return;
 				}
 
 			}
-			else if (this.ch == '\n') ++this.lineNumber;
-
-			this.ch = (char) this.readByte();
+			else {
+				if (this.ch == '\n') nextLine();
+				readChar();
+			}
 		}
 	}
 
+	private void nextLine() {
+		this.prevLine = this.currLine.toString();
+		this.currLine = new StringBuilder();
+		++this.lineNumber;
+	}
+
 
 	/**
-	 * After execution, the input stream is at the first byte after the newline character.
+	 * After execution, this.ch is a newline or EOF.
+	 * This does not increment the line counter.
 	 * This method does check for carriage returns
 	*/
-	private void skipLineComment() {
-		char next = (char) this.readByte();
-		while (next != '\n' && !isEOF(next) ) next = (char) this.readByte();
-		if (next == '\n') ++this.lineNumber;
-		this.ch = next;
+	private void consumeLine() {
+		readChar();
+		while (this.ch != '\n' && !isEOF(this.ch) ) readChar();
 	}
 
 	/**
-	 * After execution, the input stream is at the first byte after the comment (assuming the comment is closed)
+	 * After execution, this.ch the first byte after the comment (assuming the comment is closed)
 	 * @return Whether the comment was closed.
 	*/
-	private boolean skipBlockComment() {
+	private boolean skipBlockComment() throws LexException{
 
 		boolean open = true;
-		char next = (char) this.readByte();
+		readChar();
 
-		while (!isEOF(next)) {
-			if (next == '*') {
-				next = (char) this.readByte();
-				if (next == '/') {
-					this.ch = (char) this.readByte();
+		while (!isEOF(this.ch)) {
+			if (this.ch == '*') {
+				readChar();
+				if (this.ch == '/') {
+					readChar();
 					return true;
 				}
 			}
 			else {
-				if (next == '\n') ++this.lineNumber;
-				next = (char) this.readByte();
+				if (this.ch == '\n') nextLine();
+				readChar();
 			}
 
 		}
-		this.ch = next;
-		return false;	
+		throwUnterminatedException("block comment");
+
+		return false;
+
 	}
+
+	private void throwUnterminatedException(String unterminated) throws LexException {
+		String fullMessage = "Unterminated " + unterminated + " at line " + this.lineNumber;
+		throw new LexException(fullMessage);
+	}
+
+
+	private void throwException(String baseMessage) throws LexException {
+
+		
+		int lineNumDigits = new Integer(this.lineNumber).toString().length();
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < lineNumDigits + 2; ++i) sb.append(' '); //Move past line number
+		for (int i = 0; i < this.currLine.length() - 1; ++i) sb.append(' ');
+		sb.append('^');
+
+		if (this.ch != '\n') consumeLine(); //Get rest of line for the error message
+
+		String fullMessage;
+		if (this.lineNumber > 1) {
+			String fmtString = "Lexing error at line %d: %s\n" +
+					"%" + lineNumDigits + "d: %s\n" +
+					"%" + lineNumDigits + "d: %s\n" +
+					"%s";
+
+			fullMessage = String.format(fmtString,
+				this.lineNumber, baseMessage,
+				this.lineNumber-1, this.prevLine,
+				this.lineNumber, this.currLine.toString(),
+				sb.toString()
+			);
+		}
+		else {
+			String fmtString = "Lexing error at line %d: %s\n" +
+					"%" + lineNumDigits + "d: %s\n" +
+					"%s";
+
+			fullMessage = String.format(fmtString,
+				this.lineNumber, baseMessage,
+				this.lineNumber, this.currLine.toString(),
+				sb.toString()
+			);
+
+
+		}
+		throw new LexException(fullMessage);
+	}
+
+	private void readChar() {
+		this.ch = (char) this.readByte();
+		this.appendChar(this.ch);
+	}
+
+	private void appendChar(char c) {
+		if (!isEOF(c) && c != '\n') this.currLine.append(c);
+	}
+
 
 	private int readByte() {
 		try {
@@ -205,9 +270,15 @@ public class Lexer {
 
 
 	}
-	private void unread(int b) {
+	private void unread() {
 		try {
-			this.in.unread(b);
+			this.in.unread(this.ch);
+			this.currLine.deleteCharAt(this.currLine.length() - 1);
+
+			if (currLine.length() > 0)
+				this.ch = currLine.charAt(this.currLine.length() - 1);
+			else
+				this.ch = (char) -1;
 		}
 		catch (java.io.IOException e) {
 			System.err.println("Error pushing byte back to input stream");
@@ -220,5 +291,7 @@ public class Lexer {
 
 	private PushbackInputStream in;
 	private char ch;
-	private int lineNumber;
+	public int lineNumber;
+	public String prevLine;
+	public StringBuilder currLine;
 }

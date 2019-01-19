@@ -7,7 +7,7 @@ public class Scanner {
 	public static void main(String[] args) {
 
 		if (args.length < 1) {
-			System.err.println("Usage: java Scannar <source_file>");
+			System.err.println("Usage: java Scanner <source_file>");
 			return;
 		}
 		final String path = args[0];
@@ -21,13 +21,15 @@ public class Scanner {
 				System.out.println(lexeme);
 				lexeme = lexer.lex();
 			}
-
+		}
+		catch (LexException e) {
+			System.out.println(e.getMessage());
 		}
 		catch (java.io.FileNotFoundException e) {
-			System.err.printf("The file %s does not exist.", path);
+			System.out.printf("The file %s does not exist.", path);
 		}
 		catch (java.io.IOException e) {
-			System.err.println("An error closing the file occurred.");
+			System.out.println("An error closing the file occurred.");
 		}
 
 
