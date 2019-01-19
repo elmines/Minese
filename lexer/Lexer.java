@@ -13,7 +13,7 @@ public class Lexer {
 
 	public Lexeme lex() {
 
-		this.ch = this.readChar();
+		this.ch = (char) this.readByte();
 		skipWhitespace();
 
 
@@ -40,9 +40,27 @@ public class Lexer {
 			case '!': return new Lexeme(Type.NOT);
 
 
+			default:
+				if (Character.isDigit(this.ch)) {
+					this.unread(this.ch);
+					return lexNumber();
+				}
+
 		}
 
 		return new Lexeme(Type.EOF);
+	}
+
+	private Lexeme lexNumber() {
+		StringBuilder digits = new StringBuilder();
+		int next = this.readByte();
+		while (Character.isDigit(next)) {
+			digits.append((char) next);
+			next = this.readByte();
+		}
+		this.unread(next);
+
+		return new Lexeme(Type.INTEGER, Integer.parseInt(digits.toString()));
 	}
 
 	/**
@@ -53,25 +71,21 @@ public class Lexer {
 		while ( Character.isWhitespace(this.ch) || this.ch == '/' ) {
 			if (this.ch == '/') {
 				char prev = this.ch;
-				char next = this.readChar();
+				char next = (char) this.readByte();
 
 				switch(next) {
 					case '/': skipLineComment(); break;
 					case '*': skipBlockComment(); break;
 					default:
 						this.ch = prev;
-						try {this.in.unread(next);}
-						catch (java.io.IOException e) {
-							System.err.println("Error pushing byte back to input stream");
-							System.exit(-1);
-						}
+						this.unread(next);
 						return;
 				}
 
 			}
 			else if (this.ch == '\n') ++this.lineNumber;
 
-			this.ch = this.readChar();
+			this.ch = (char) this.readByte();
 		}
 	}
 
@@ -81,8 +95,8 @@ public class Lexer {
 	 * This method does check for carriage returns
 	*/
 	private void skipLineComment() {
-		char next = this.readChar();
-		while (next != '\n' && !isEOF(next) ) next = this.readChar();
+		char next = (char) this.readByte();
+		while (next != '\n' && !isEOF(next) ) next = (char) this.readByte();
 		if (next == '\n') ++this.lineNumber;
 		this.ch = next;
 	}
@@ -94,19 +108,19 @@ public class Lexer {
 	private boolean skipBlockComment() {
 
 		boolean open = true;
-		char next = this.readChar();
+		char next = (char) this.readByte();
 
 		while (!isEOF(next)) {
 			if (next == '*') {
-				next = this.readChar();
+				next = (char) this.readByte();
 				if (next == '/') {
-					this.ch = this.readChar();
+					this.ch = (char) this.readByte();
 					return true;
 				}
 			}
 			else {
 				if (next == '\n') ++this.lineNumber;
-				next = this.readChar();
+				next = (char) this.readByte();
 			}
 
 		}
@@ -114,20 +128,30 @@ public class Lexer {
 		return false;	
 	}
 
-	private char readChar() {
+	private int readByte() {
 		try {
-			return (char) in.read();
+			return in.read();
 		}
 		catch(java.io.IOException e) {
 			System.err.println("Caught an exception reading a character.");
 			e.printStackTrace();
-			return (char) -1;
+			return -1;
 		}
 
 
 	}
+	private void unread(int b) {
+		try {
+			this.in.unread(b);
+		}
+		catch (java.io.IOException e) {
+			System.err.println("Error pushing byte back to input stream");
+			System.exit(-1);
+		}
+	}
 
-	private static boolean isEOF(char c){return c == -1 || c == 65535;}
+	private static boolean isEOF(char c) {return c == -1 || c == 65535;}
+
 
 	private PushbackInputStream in;
 	private char ch;
