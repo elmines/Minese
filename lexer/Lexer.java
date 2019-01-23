@@ -45,6 +45,9 @@ public class Lexer {
 			case '|': return new Lexeme(Type.OR);
 			case ',': return new Lexeme(Type.COMMA);
 			case ';': return new Lexeme(Type.SEMICOLON);
+			case '"':
+				this.unread();
+				return lexString();
 
 
 			default:
@@ -62,6 +65,21 @@ public class Lexer {
 				}
 
 		}
+	}
+
+	private Lexeme lexString() throws LexException {
+		this.readChar();
+		assert this.ch == '"';
+
+		StringBuilder literal = new StringBuilder();
+		this.readChar();
+		while (this.ch != '"') {
+			if (this.ch == '\n') nextLine();
+			if (isEOF(this.ch)) throwUnterminatedException("string literal");
+			literal.append(this.ch);
+			this.readChar();
+		}	
+		return new Lexeme(Type.STRING, literal.toString());
 	}
 
 	private Lexeme lexCmpOperator() {
