@@ -1,0 +1,7 @@
+var x = false;
+var y = 5;
+var z = 0;
+
+while ( !x | (y & z) ) {
+	print("Boolean expressions are great!");
+}

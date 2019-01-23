@@ -1,0 +1,11 @@
+if (x <= 3) {
+	print(5 != 2);
+} else if ( !(x > 4) ) {
+	print(x = 2);
+} else if ( false ) {
+	print("This really should be unreachable.");
+} else if ( true ) {
+	print("This really should be reachable.");
+} else {
+	print("On accont of the prior branch, this should be unreachable.");
+}

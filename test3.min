@@ -1,0 +1,14 @@
+var x = "Ethan loves having /* things that look like comments */ in the // middle of string literals"; //As well as trailing comments
+
+
+		// print("Isn't commenting out statements great?");
+
+	var y 
+
+
+
+				= -5;
+
+
+						if (whitespaceIsBad) print("You should have used an IDE or a linter.");
+

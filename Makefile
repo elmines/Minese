@@ -1,22 +1,26 @@
 COMP=javac
 OPTS=-Xlint
 
-scanner: Scanner.class
+scanner: Scanner.class scriptText.txt
+	cp scriptText.txt scanner
+	chmod +x scanner
+
+run: test1 test2 test3 test4 test5
 
 test1: scanner
-	java Scanner test1.min
+	./scanner test1.min
 
 test2: scanner
-	java Scanner test2.min
+	./scanner test2.min
 
 test3: scanner
-	java Scanner test3.min
+	./scanner test3.min
 
 test4: scanner
-	java Scanner test4.min
+	./scanner test4.min
 
 test5: scanner
-	java Scanner test5.min
+	./scanner test5.min
 
 Scanner.class: Scanner.java Lexer.class LexException.class
 	$(COMP) $(OPTS) Scanner.java
@@ -34,4 +38,4 @@ LexException.class: LexException.java
 	$(COMP) $(OPTS) LexException.java
 
 clean:
-	rm *.class
+	rm *.class scanner
