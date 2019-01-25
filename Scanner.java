@@ -1,3 +1,8 @@
+/*
+ * Ethan Mines
+ * CS503 - Lusth
+ */
+
 import java.io.PushbackInputStream;
 import java.io.FileInputStream;
 

@@ -1,3 +1,6 @@
+# Ethan Mines
+# CS503 - Lusth
+
 COMP=javac
 OPTS=-Xlint
 

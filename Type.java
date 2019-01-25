@@ -1,3 +1,8 @@
+/*
+ * Ethan Mines
+ * CS503 - Lusth
+ */
+
 public enum Type {
 	OPAREN, CPAREN, OCURLY, CCURLY, OBRACK, CBRACK,
 	PLUS, MINUS, TIMES, DIV, MOD,

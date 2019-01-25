@@ -1,3 +1,8 @@
+/* 
+ * Ethan Mines
+ * CS503 - Lusth
+ */
+
 var x = "Ethan loves having /* things that look like comments */ in the // middle of string literals"; //As well as trailing comments
 
 

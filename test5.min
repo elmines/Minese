@@ -1,2 +1,7 @@
+/* 
+ * Ethan Mines
+ * CS503 - Lusth
+ */
+
 var x = 5;
 var y = x + $someVariable;

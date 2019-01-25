@@ -1,5 +1,5 @@
 # Minese
-A dynamically interpreted programming language
+A dynamically-typed, interpreted programming language by Ethan Mines
 
 ## Program Structure
 A program consists of definitions (of variables, functions, and/or classes):

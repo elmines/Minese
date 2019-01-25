@@ -1,3 +1,7 @@
+/*
+ * Ethan Mines
+ * CS503 - Lusth
+ */
 class Lexeme {
 
 	public final Type type;
