@@ -64,9 +64,30 @@ public class Parser {
 	}
 
 	private Lexeme unary() throws LexException, SyntaxException {
-		Lexeme i = match(Type.INTEGER);
 
-		return new Lexeme(Type.unary, i, null);
+		if (check(Type.MINUS)) {
+			Lexeme uMinus = Lexeme.toUminus(advance());
+			return new Lexeme(Type.unary, uMinus, unary());
+		}
+		if (check(Type.NOT))
+			return new Lexeme(Type.unary, advance(), unary());
+
+
+		if (check(Type.OPAREN)) {
+			advance();
+			Lexeme expr = expression();
+			match(Type.CPAREN);
+			return expr;
+		}
+
+		if (check(Type.IDENTIFIER)) return advance();
+		if (check(Type.BOOLEAN))    return advance();
+		if (check(Type.INTEGER))    return advance();
+		if (check(Type.STRING))     return advance();
+		
+
+		throw new SyntaxException(String.format(syntaxFmt, this.curr.lineNumber, "unary", this.curr.type));
+
 	}
 
 	private Lexeme funcDef() throws LexException, SyntaxException {
@@ -87,8 +108,7 @@ public class Parser {
 	 */
 	private Lexeme match(Type t) throws LexException, SyntaxException {
 		if (!check(t)) {
-			String fmt = "Error on line %d: Expected %s, found %s";
-			throw new SyntaxException(String.format(fmt, this.curr.lineNumber, t, this.curr.type));
+			throw new SyntaxException(String.format(syntaxFmt, this.curr.lineNumber, t, this.curr.type));
 		}
 		return advance();
 	}
@@ -118,4 +138,5 @@ public class Parser {
 	}
 
 
+	private static final String syntaxFmt = "Error on line %d: Expected %s, found %s";
 }

@@ -64,6 +64,13 @@ class Lexeme {
 		this.r = null;
 	}
 
+	/**
+	 * @return A new Lexeme with all of orig's fields, except for its new Type
+	 */
+	public static Lexeme toUminus(Lexeme orig) {
+		return new Lexeme(Type.UMINUS, orig.l, orig.r);
+	}
+
 	public Lexeme getLeft() {return this.l;}
 	public Lexeme getRight() {return this.r;}
 	public void setLeft(Lexeme l) {this.l = l;}
@@ -88,4 +95,5 @@ class Lexeme {
 		else if (this.strVal != null) return this.strVal;
 		else                          return "";
 	}
+
 }

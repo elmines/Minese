@@ -68,6 +68,7 @@ expression : unary
            | unary operator expression
 
 unary: UMINUS unary
+     | NOT    unary
      | OPAREN expression CPAREN
      | functionCall
      | array
