@@ -16,6 +16,10 @@ public enum Type {
 	BOOLEAN,
 	IDENTIFIER,
 	EOF,
-	UNKNOWN
+	UNKNOWN,
+
+	//Nonterminals
+	program,
+	varDef
 }
 

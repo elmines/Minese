@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Ethan Mines
+# CS503 - Lusth
+
+java Recognizer $1

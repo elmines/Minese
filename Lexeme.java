@@ -7,9 +7,27 @@ class Lexeme {
 	public final Type type;
 	public final int lineNumber;
 
+	/*
+	 * Construc a nonterminal lexeme
+	 */
+	public Lexeme(Type type, Lexeme l, Lexeme r) {
+		this.type = type;
+		this.strVal = null;
+		this.intVal = null;
+		this.boolVal = null;
+
+		this.l = l;
+		this.r = r;
+		if      (l != null) this.lineNumber = l.lineNumber;
+		else if (r != null) this.lineNumber = r.lineNumber;
+		else                this.lineNumber = -1;
+
+	}
+
 	public Lexeme(int lineNumber, Type type) {
 		this(lineNumber, type, "");
 	}
+
 
 	public Lexeme(int lineNumber, Type type, String value) {
 		this.lineNumber = lineNumber;
@@ -18,6 +36,9 @@ class Lexeme {
 		this.strVal = value;
 		this.intVal = null;
 		this.boolVal = null;
+		this.l = null;
+		this.r = null;
+
 	}
 
 	public Lexeme(int lineNumber, Type type, Integer value) {
@@ -27,6 +48,9 @@ class Lexeme {
 		this.strVal = null;
 		this.intVal = value;
 		this.boolVal = null;
+		this.l = null;
+		this.r = null;
+
 	}
 
 	public Lexeme(int lineNumber, Type type, Boolean value) {
@@ -36,7 +60,10 @@ class Lexeme {
 		this.strVal = null;
 		this.intVal = null;
 		this.boolVal = value;
+		this.l = null;
+		this.r = null;
 	}
+
 
 	@Override
 	public String toString() {
@@ -48,6 +75,7 @@ class Lexeme {
 	private final Boolean boolVal;
 	private final Integer intVal;
 	private final String strVal;
+	private final Lexeme l, r;
 
 	private String valueString() {
 		if (this.intVal != null) return this.intVal.toString();
