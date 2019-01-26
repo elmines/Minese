@@ -5,12 +5,14 @@
 class Lexeme {
 
 	public final Type type;
+	public final int lineNumber;
 
-	public Lexeme(Type type) {
-		this(type, "");
+	public Lexeme(int lineNumber, Type type) {
+		this(lineNumber, type, "");
 	}
 
-	public Lexeme(Type type, String value) {
+	public Lexeme(int lineNumber, Type type, String value) {
+		this.lineNumber = lineNumber;
 		this.type = type;
 
 		this.strVal = value;
@@ -18,7 +20,8 @@ class Lexeme {
 		this.boolVal = null;
 	}
 
-	public Lexeme(Type type, Integer value) {
+	public Lexeme(int lineNumber, Type type, Integer value) {
+		this.lineNumber = lineNumber;
 		this.type = type;
 
 		this.strVal = null;
@@ -26,7 +29,8 @@ class Lexeme {
 		this.boolVal = null;
 	}
 
-	public Lexeme(Type type, Boolean value) {
+	public Lexeme(int lineNumber, Type type, Boolean value) {
+		this.lineNumber = lineNumber;
 		this.type = type;
 
 		this.strVal = null;
@@ -37,8 +41,8 @@ class Lexeme {
 	@Override
 	public String toString() {
 		String value = this.valueString();
-		if (value.length() > 0) return String.format("%s %s", this.type.toString(), value);
-		else                    return this.type.toString();
+		if (value.length() > 0) return String.format("%d: %s %s", this.lineNumber, this.type.toString(), value);
+		else                    return String.format("%d: %s", this.lineNumber, this.type.toString());
 	}
 
 	private final Boolean boolVal;

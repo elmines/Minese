@@ -22,20 +22,20 @@ public class Lexer {
 		skipWhitespace();
 
 
-		if (isEOF(this.ch)) return new Lexeme(Type.EOF);
+		if (isEOF(this.ch)) return new Lexeme(this.lineNumber, Type.EOF);
 
 		switch(this.ch) {
-			case '(': return new Lexeme(Type.OPAREN);
-			case ')': return new Lexeme(Type.CPAREN);
-			case '{': return new Lexeme(Type.OCURLY);
-			case '}': return new Lexeme(Type.CCURLY);
-			case '[': return new Lexeme(Type.OBRACK);
-			case ']': return new Lexeme(Type.CBRACK);
-			case '+': return new Lexeme(Type.PLUS);
-			case '-': return new Lexeme(Type.MINUS);
-			case '*': return new Lexeme(Type.TIMES);
-			case '/': return new Lexeme(Type.DIV);
-			case '%': return new Lexeme(Type.MOD);
+			case '(': return new Lexeme(this.lineNumber, Type.OPAREN);
+			case ')': return new Lexeme(this.lineNumber, Type.CPAREN);
+			case '{': return new Lexeme(this.lineNumber, Type.OCURLY);
+			case '}': return new Lexeme(this.lineNumber, Type.CCURLY);
+			case '[': return new Lexeme(this.lineNumber, Type.OBRACK);
+			case ']': return new Lexeme(this.lineNumber, Type.CBRACK);
+			case '+': return new Lexeme(this.lineNumber, Type.PLUS);
+			case '-': return new Lexeme(this.lineNumber, Type.MINUS);
+			case '*': return new Lexeme(this.lineNumber, Type.TIMES);
+			case '/': return new Lexeme(this.lineNumber, Type.DIV);
+			case '%': return new Lexeme(this.lineNumber, Type.MOD);
 
 			case '<':
 			case '>':
@@ -44,11 +44,11 @@ public class Lexer {
 				this.unread();
 				return lexCmpOperator();
 
-			case '.': return new Lexeme(Type.DOT);
-			case '&': return new Lexeme(Type.AND);
-			case '|': return new Lexeme(Type.OR);
-			case ',': return new Lexeme(Type.COMMA);
-			case ';': return new Lexeme(Type.SEMICOLON);
+			case '.': return new Lexeme(this.lineNumber, Type.DOT);
+			case '&': return new Lexeme(this.lineNumber, Type.AND);
+			case '|': return new Lexeme(this.lineNumber, Type.OR);
+			case ',': return new Lexeme(this.lineNumber, Type.COMMA);
+			case ';': return new Lexeme(this.lineNumber, Type.SEMICOLON);
 			case '"':
 				this.unread();
 				return lexString();
@@ -65,7 +65,7 @@ public class Lexer {
 				}
 				else {
 					throwException("Unknown character "+this.ch);
-					return new Lexeme(Type.UNKNOWN, new String(new char[]{this.ch}));
+					return new Lexeme(this.lineNumber, Type.UNKNOWN, new String(new char[]{this.ch}));
 				}
 
 		}
@@ -83,7 +83,7 @@ public class Lexer {
 			literal.append(this.ch);
 			this.readChar();
 		}	
-		return new Lexeme(Type.STRING, literal.toString());
+		return new Lexeme(this.lineNumber, Type.STRING, literal.toString());
 	}
 
 	private Lexeme lexCmpOperator() {
@@ -94,19 +94,19 @@ public class Lexer {
 
 		switch (first) {
 			case '<':
-				if (second == '=') return new Lexeme(Type.LTE);
-				else               this.unread(); return new Lexeme(Type.LT);
+				if (second == '=') return new Lexeme(this.lineNumber, Type.LTE);
+				else               this.unread(); return new Lexeme(this.lineNumber, Type.LT);
 			case '>':
-				if (second == '=') return new Lexeme(Type.GTE);
-				else               this.unread(); return new Lexeme(Type.GT);
+				if (second == '=') return new Lexeme(this.lineNumber, Type.GTE);
+				else               this.unread(); return new Lexeme(this.lineNumber, Type.GT);
 			case '=':
-				if (second == '=') return new Lexeme(Type.EQ);
-				else               this.unread(); return new Lexeme(Type.ASSIGN);
+				if (second == '=') return new Lexeme(this.lineNumber, Type.EQ);
+				else               this.unread(); return new Lexeme(this.lineNumber, Type.ASSIGN);
 			case '!':
-				if (second == '=') return new Lexeme(Type.NEQ);
-				else               this.unread(); return new Lexeme(Type.NOT);
+				if (second == '=') return new Lexeme(this.lineNumber, Type.NEQ);
+				else               this.unread(); return new Lexeme(this.lineNumber, Type.NOT);
 			default:
-				return new Lexeme(Type.UNKNOWN, new String(new char[]{first}));
+				return new Lexeme(this.lineNumber, Type.UNKNOWN, new String(new char[]{first}));
 		}
 
 	}
@@ -123,18 +123,18 @@ public class Lexer {
 
 		String word = chars.toString();
 		switch (word) {
-			case "if": return new Lexeme(Type.IF);
-			case "else": return new Lexeme(Type.ELSE);
-			case "while": return new Lexeme(Type.WHILE);
-			case "var": return new Lexeme(Type.VAR);
-			case "define": return new Lexeme(Type.DEFINE);
-			case "class": return new Lexeme(Type.CLASS);
-			case "extends": return new Lexeme(Type.EXTENDS);
-			case "return": return new Lexeme(Type.RETURN);
-			case "true": return new Lexeme(Type.BOOLEAN, true);
-			case "false": return new Lexeme(Type.BOOLEAN, false);
+			case "if": return new Lexeme(this.lineNumber, Type.IF);
+			case "else": return new Lexeme(this.lineNumber, Type.ELSE);
+			case "while": return new Lexeme(this.lineNumber, Type.WHILE);
+			case "var": return new Lexeme(this.lineNumber, Type.VAR);
+			case "define": return new Lexeme(this.lineNumber, Type.DEFINE);
+			case "class": return new Lexeme(this.lineNumber, Type.CLASS);
+			case "extends": return new Lexeme(this.lineNumber, Type.EXTENDS);
+			case "return": return new Lexeme(this.lineNumber, Type.RETURN);
+			case "true": return new Lexeme(this.lineNumber, Type.BOOLEAN, true);
+			case "false": return new Lexeme(this.lineNumber, Type.BOOLEAN, false);
 
-			default: return new Lexeme(Type.IDENTIFIER, word);
+			default: return new Lexeme(this.lineNumber, Type.IDENTIFIER, word);
 		}
 	}
 
@@ -148,7 +148,7 @@ public class Lexer {
 		}
 		this.unread();
 
-		return new Lexeme(Type.INTEGER, Integer.parseInt(digits.toString()));
+		return new Lexeme(this.lineNumber, Type.INTEGER, Integer.parseInt(digits.toString()));
 	}
 
 	/**
