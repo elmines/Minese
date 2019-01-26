@@ -20,6 +20,8 @@ public enum Type {
 
 	//Nonterminals
 	program,
-	varDef
+	varDef,
+	expression,
+	unary
 }
 

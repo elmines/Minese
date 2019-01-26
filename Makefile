@@ -28,7 +28,8 @@ test5: recognizer
 Recognizer.class: Recognizer.java Lexeme.class Parser.class LexException.class SyntaxException.class
 	$(COMP) $(OPTS) Recognizer.java
 
-Parser.class: Parser.java Lexer.class Lexeme.class LexException.class SyntaxException.class
+Parser.class: Parser.java Type.class Group.class Lexer.class Lexeme.class \
+		 LexException.class SyntaxException.class
 	$(COMP) $(OPTS) Parser.java
 
 Lexer.class: Lexer.java Lexeme.class Type.class LexException.class
@@ -36,6 +37,9 @@ Lexer.class: Lexer.java Lexeme.class Type.class LexException.class
 
 Lexeme.class: Lexeme.java Type.class
 	$(COMP) $(OPTS) Lexeme.java
+
+Group.class: Group.java Type.class
+	$(COMP) $(OPTS) Group.java
 
 Type.class: Type.java
 	$(COMP) $(OPTS) Type.java

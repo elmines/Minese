@@ -33,13 +33,41 @@ public class Parser {
 		match(Type.VAR);
 		Lexeme id = match(Type.IDENTIFIER);
 
-		//match(Type.EQ);
 		Lexeme expr = null;
-
+		if (check(Type.ASSIGN)) {
+			advance();
+			expr = expression();
+		}
 		match(Type.SEMICOLON);
 		return new Lexeme(Type.varDef, id, expr);
 	}
 	private boolean varDefPending() { return check(Type.VAR); }
+
+	private Lexeme expression() throws LexException, SyntaxException {
+		Lexeme u = unary();
+		Lexeme op = null;
+		if (operatorPending()) {
+			op = operator();
+			op.setRight(expression());
+		}
+		return new Lexeme(Type.expression, u, op);
+	}
+	private boolean expressionPending() {
+		return false;
+	}
+
+	private Lexeme operator() throws LexException, SyntaxException {
+		return match(Group.BINARY);
+	}
+	private boolean operatorPending() {
+		return check(Group.BINARY);
+	}
+
+	private Lexeme unary() throws LexException, SyntaxException {
+		Lexeme i = match(Type.INTEGER);
+
+		return new Lexeme(Type.unary, i, null);
+	}
 
 	private Lexeme funcDef() throws LexException, SyntaxException {
 		return new Lexeme(-1, Type.UNKNOWN);
@@ -54,7 +82,31 @@ public class Parser {
 	private Lexer lexer;
 	private Lexeme curr;
 
+	/**
+	 * @return The matched lexeme
+	 */
+	private Lexeme match(Type t) throws LexException, SyntaxException {
+		if (!check(t)) {
+			String fmt = "Error on line %d: Expected %s, found %s";
+			throw new SyntaxException(String.format(fmt, this.curr.lineNumber, t, this.curr.type));
+		}
+		return advance();
+	}
+
+	/**
+	 * @return The matched lexeme
+	 */
+	private Lexeme match(Group g) throws LexException, SyntaxException {
+		if (!check(g)) {
+			String fmt = "Error on line %d: Expected %s, found %s";
+			throw new SyntaxException(String.format(fmt, this.curr.lineNumber, g.name, this.curr.type));
+		}
+		return advance();
+	}
+
 	private boolean check(Type t) {return t == this.curr.type;}
+	private boolean check(Group g) {return g.contains(this.curr.type);}
+
 
 	/**
 	 * @return The previous lexeme
@@ -64,12 +116,6 @@ public class Parser {
 		this.curr = lexer.lex();	
 		return old;
 	}
-	private Lexeme match(Type t) throws LexException, SyntaxException {
-		if (!check(t)) {
-			String fmt = "Error on line %d: Expected %s, found %s";
-			throw new SyntaxException(String.format(fmt, this.curr.lineNumber, this.curr.type, t));
-		}
-		return advance();
-	}
+
 
 }

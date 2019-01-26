@@ -17,14 +17,14 @@ public class Recognizer {
 		}
 		final String path = args[0];
 
-
+		boolean legal = true;
 		try (PushbackInputStream in = new PushbackInputStream(new FileInputStream(path))) {
 			Parser p = new Parser(in);
 			Lexeme prog = p.program();
 		}
 		catch (SyntaxException | LexException e) {
 			System.out.println(e.getMessage());
-			System.out.println("illegal");
+			legal = false;
 		}
 		catch (java.io.FileNotFoundException e) {
 			System.out.printf("The file %s does not exist.", path);
@@ -33,7 +33,8 @@ public class Recognizer {
 			System.out.println("An error closing the file occurred.");
 		}
 
-		System.out.println("legal");
+		if (legal) System.out.println("legal");
+		else       System.out.println("illegal");
 
 	}
 

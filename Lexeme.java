@@ -64,6 +64,11 @@ class Lexeme {
 		this.r = null;
 	}
 
+	public Lexeme getLeft() {return this.l;}
+	public Lexeme getRight() {return this.r;}
+	public void setLeft(Lexeme l) {this.l = l;}
+	public void setRight(Lexeme r) {this.r = r;}
+
 
 	@Override
 	public String toString() {
@@ -75,7 +80,7 @@ class Lexeme {
 	private final Boolean boolVal;
 	private final Integer intVal;
 	private final String strVal;
-	private final Lexeme l, r;
+	private Lexeme l, r;
 
 	private String valueString() {
 		if (this.intVal != null) return this.intVal.toString();
