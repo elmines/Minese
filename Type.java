@@ -13,7 +13,7 @@ public enum Type {
 	COMMA, SEMICOLON,
 	INTEGER, STRING,
 	IF, ELSE, WHILE,
-	VAR, DEFINE, CLASS, EXTENDS, RETURN,
+	VAR, DEFINE, CLASS, EXTENDS, RETURN, LAMBDA,
 	BOOLEAN,
 	IDENTIFIER,
 	EOF,
@@ -23,6 +23,14 @@ public enum Type {
 	program,
 	varDef,
 	expression,
-	unary
+	unary,
+	anonFunction,
+
+	functionSig,
+	paramsList,
+
+	block,
+	statements,
+	returnStatement
 }
 

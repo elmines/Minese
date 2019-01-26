@@ -73,7 +73,7 @@ unary: UMINUS unary
      | functionCall
      | array
      | arrayElement
-     | lambda
+     | anonFunction
      | IDENTIFIER
      | boolean
      | INTEGER
@@ -91,7 +91,7 @@ array : OCURLY exprList CCURLY
 
 arrayElement : expression OBRACK expression CBRACK
 
-lambda : functionSig block
+anonFunction : LAMBDA functionSig block
 
 boolean : TRUE
         | FALSE
@@ -111,4 +111,3 @@ operator : PLUS
          | DOT
          | AND
          | OR
-         | NOT

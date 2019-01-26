@@ -131,6 +131,7 @@ public class Lexer {
 			case "class": return new Lexeme(this.lineNumber, Type.CLASS);
 			case "extends": return new Lexeme(this.lineNumber, Type.EXTENDS);
 			case "return": return new Lexeme(this.lineNumber, Type.RETURN);
+			case "lambda": return new Lexeme(this.lineNumber, Type.LAMBDA);
 			case "true": return new Lexeme(this.lineNumber, Type.BOOLEAN, true);
 			case "false": return new Lexeme(this.lineNumber, Type.BOOLEAN, false);
 

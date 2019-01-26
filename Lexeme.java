@@ -10,7 +10,7 @@ class Lexeme {
 	/*
 	 * Construc a nonterminal lexeme
 	 */
-	public Lexeme(Type type, Lexeme l, Lexeme r) {
+	public Lexeme(Type type, Lexeme l, Lexeme r, int lineNumber) {
 		this.type = type;
 		this.strVal = null;
 		this.intVal = null;
@@ -18,10 +18,14 @@ class Lexeme {
 
 		this.l = l;
 		this.r = r;
-		if      (l != null) this.lineNumber = l.lineNumber;
-		else if (r != null) this.lineNumber = r.lineNumber;
-		else                this.lineNumber = -1;
+		this.lineNumber = lineNumber;
 
+	}
+	/*
+	 * Construc a nonterminal lexeme, with line number inferred from l and r
+	 */
+	public Lexeme(Type type, Lexeme l, Lexeme r) {
+		this(type, l, r, inferLineNumber(l, r));
 	}
 
 	public Lexeme(int lineNumber, Type type) {
@@ -94,6 +98,12 @@ class Lexeme {
 		else if (this.boolVal != null) return this.boolVal.toString();
 		else if (this.strVal != null) return this.strVal;
 		else                          return "";
+	}
+
+	private static int inferLineNumber(Lexeme l, Lexeme r) {
+		if      (l != null) return l.lineNumber;
+		else if (r != null) return r.lineNumber;
+		else                return -1;
 	}
 
 }
