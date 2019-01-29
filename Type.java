@@ -29,6 +29,9 @@ public enum Type {
 
 	array,
 
+	condStatement,
+	whileStatement,
+
 	funcCall,
 	arrayElement,
 

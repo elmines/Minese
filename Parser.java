@@ -174,8 +174,12 @@ public class Parser {
 	private boolean statementsPending() {return statementPending();}
 
 	private Lexeme statement() throws LexException, SyntaxException {
+		if (defPending())             return def();
+		if (returnStatementPending()) return returnStatement();
 
-		if (defPending()) return def();
+		if (condStatementPending())   return condStatement();
+
+		if (whileStatementPending())  return whileStatement();
 
 		if (expressionPending()) {
 			Lexeme expr = expression();
@@ -183,15 +187,41 @@ public class Parser {
 			return expr;
 		}
 
-		if (returnStatementPending()) return returnStatement();
-		
 		throw new SyntaxException(String.format(syntaxFmt, this.curr.lineNumber, "statement", this.curr.type));
 	}
 	private boolean statementPending() {
-		return defPending() ||
-			expressionPending() ||
-			returnStatementPending();
+		return  defPending()             ||
+			returnStatementPending() ||
+			condStatementPending()   ||
+			whileStatementPending()  ||
+			expressionPending()        ;
 	}
+
+	private Lexeme whileStatement() throws LexException, SyntaxException {
+		match(Type.WHILE);
+		match(Type.OPAREN);
+		Lexeme condition = expression();
+		match(Type.CPAREN);
+		Lexeme body = block();
+		return new Lexeme(Type.whileStatement, condition, body);
+	}
+	private boolean whileStatementPending() {return check(Type.WHILE);}
+
+	private Lexeme condStatement() throws LexException, SyntaxException {
+		match(Type.IF);
+		match(Type.OPAREN);
+		Lexeme condition = expression();
+		match(Type.CPAREN);
+		Lexeme body = block();
+
+		Lexeme alt = null;
+		if (check(Type.ELSE)) {
+			advance();
+			alt = block();
+		}
+		return new Lexeme(Type.condStatement, body, alt);
+	}
+	private boolean condStatementPending() { return check(Type.IF); }
 
 	private Lexeme returnStatement() throws LexException, SyntaxException {
 		Lexeme returnKeyword = match(Type.RETURN);
