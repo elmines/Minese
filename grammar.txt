@@ -23,9 +23,9 @@ optAssignment : NONE
 
 
 
-functionDef : DEFINE IDENTIFIER functionSig block
+functionDef : DEFINE IDENTIFIER funcBody
 
-functionSig : OPAREN optParamsList CPAREN
+funcBody: OPAREN optParamsList CPAREN block
 
 optParamsList : NONE
               | paramsList
@@ -66,20 +66,18 @@ returnStatement : RETURN expression SEMICOLON
 
 expression : unary
            | unary operator expression
+           | unary OPAREN optExprList CPAREN
+           | unary OBRACK expression CBRACK
 
 unary: UMINUS unary
      | NOT    unary
      | OPAREN expression CPAREN
-     | functionCall
      | array
-     | arrayElement
      | anonFunction
      | IDENTIFIER
      | boolean
      | INTEGER
      | STRING
-
-functionCall : unary OPAREN optExprList CPAREN
 
 optExprList : NONE
             | exprList
@@ -87,11 +85,10 @@ optExprList : NONE
 exprList : expression
          | expression COMMA exprList
 
-array : OCURLY exprList CCURLY
 
-arrayElement : expression OBRACK expression CBRACK
+array : OBRACK exprList CBRACK
 
-anonFunction : LAMBDA functionSig block
+anonFunction : LAMBDA funcBody
 
 boolean : TRUE
         | FALSE

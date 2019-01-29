@@ -22,12 +22,19 @@ public enum Type {
 	//Nonterminals
 	program,
 	varDef,
+	funcDef,
 	expression,
 	unary,
 	anonFunction,
 
-	functionSig,
+	array,
+
+	funcCall,
+	arrayElement,
+
+	funcBody,
 	paramsList,
+	exprList,
 
 	block,
 	statements,
