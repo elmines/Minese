@@ -1,5 +1,10 @@
-program : definition
-        | definition program
+program : optDefs
+
+optDefs : NONE
+	| defs
+
+defs : definition
+     | definition defs
 
 definition : classDef
            | varDef
@@ -11,8 +16,8 @@ classDef : CLASS IDENTIFIER optExtension OCURLY classBody CCURLY
 optExtension : NONE
              | EXTENDS IDENTIFIER
 
-classBody : varDef
-          | varDef classBody
+classBody : definition
+          | definition classBody
 
 
 

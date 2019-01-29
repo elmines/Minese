@@ -12,19 +12,24 @@ public class Parser {
 	}
 
 	public Lexeme program() throws LexException, SyntaxException {
-		Lexeme d = def();
-		Lexeme p = programPending() ? program() : null;
-		return new Lexeme(Type.program, d, p);
+		Lexeme definitions = defPending() ? defs() : null;
+		return new Lexeme(Type.program, null, definitions);
 	}	
 	private boolean programPending(){return defPending();}
 
+	private Lexeme defs() throws LexException, SyntaxException {
+		Lexeme head = def();
+		Lexeme following = defPending() ? defs() : null;
+		return new Lexeme(Type.defs, head, following);
+	}
+
 	private Lexeme def() throws LexException, SyntaxException {
-		if (varDefPending()) return varDef();
+		if (varDefPending())  return varDef();
 		if (funcDefPending()) return funcDef();
 		return classDef();
 	}
 	private boolean defPending() {
-		return varDefPending() ||
+		return  varDefPending()  ||
 			funcDefPending() ||
 			classDefPending();
 	}
@@ -255,9 +260,25 @@ public class Parser {
 	private boolean funcDefPending() {return check(Type.DEFINE);}
 
 	private Lexeme classDef() throws LexException, SyntaxException {
-		return new Lexeme(-1, Type.UNKNOWN);
+		match(Type.CLASS);
+		Lexeme className = match(Type.IDENTIFIER);
+		Lexeme superclassName = null;
+		if (check(Type.EXTENDS)) {
+			advance();
+			superclassName = match(Type.IDENTIFIER);
+		}
+		match(Type.OCURLY);
+		Lexeme body = program();
+		match(Type.CCURLY);
+		Lexeme cls = new Lexeme(Type.classDef, className, body);
+
+		if (superclassName != null) return new Lexeme(Type.subclassDef, superclassName, cls);
+		return cls;
+
+
 	}
-	private boolean classDefPending() {return false;}
+	private boolean classDefPending() {return check(Type.CLASS);}
+
 
 	private Lexer lexer;
 	private Lexeme curr;

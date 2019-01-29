@@ -23,9 +23,14 @@ public enum Type {
 	program,
 	varDef,
 	funcDef,
+	classDef,
 	expression,
 	unary,
 	anonFunction,
+
+	defs,
+
+	subclassDef,
 
 	array,
 
