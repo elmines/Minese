@@ -7,8 +7,9 @@ defs : definition
      | definition defs
 
 definition : classDef
-           | varDef
            | functionDef
+           | varDef
+
 
 
 classDef : CLASS IDENTIFIER optExtension OCURLY classBody CCURLY
@@ -18,13 +19,6 @@ optExtension : NONE
 
 classBody : definition
           | definition classBody
-
-
-
-varDef : VAR IDENTIFIER optAssignment SEMICOLON
-
-optAssignment : NONE
-              | ASSIGN expression
 
 
 
@@ -40,6 +34,13 @@ paramsList : VAR IDENTIFIER
 
 
 
+varDef : VAR IDENTIFIER optAssignment SEMICOLON
+
+optAssignment : NONE
+              | ASSIGN expression
+
+
+
 block : OCURLY optStatements CCURLY
       | statement
 
@@ -49,30 +50,41 @@ optStatements : NONE
 statements : statement
            | statement statements
 
-statement : condBlock
+statement : definition
+	  | condBlock
           | whileBlock
-          | expression  SEMICOLON
-          | definition
           | returnStatement
+          | expression  SEMICOLON
 
 
-condStatement : IF condition block |
-              : IF condition block ELSE block
 
-whileHeader : WHILE condition block
+condStatement : IF OPAREN expression CPAREN block |
+              : IF OPAREN expression CPAREN block ELSE block
 
-condition : OPAREN expression CPAREN
+whileStatement : WHILE OPAREN expression CPAREN block
+
+
 
 returnStatement : RETURN expression SEMICOLON
                 | RETURN SEMICOLON
 
 
-
-
 expression : unary
+           | unary funcCall
+           | unary index
            | unary operator expression
-           | unary OPAREN optExprList CPAREN
-           | unary OBRACK expression CBRACK
+
+funcCall: OPAREN optExprList CPAREN
+
+optExprList : NONE
+            | exprList
+
+exprList : expression
+         | expression COMMA exprList
+
+index:    OBRACK expression CBRACK
+
+
 
 unary: UMINUS unary
      | NOT    unary
@@ -83,13 +95,6 @@ unary: UMINUS unary
      | boolean
      | INTEGER
      | STRING
-
-optExprList : NONE
-            | exprList
-
-exprList : expression
-         | expression COMMA exprList
-
 
 array : OBRACK exprList CBRACK
 

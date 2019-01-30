@@ -17,12 +17,12 @@ public class Parser {
 	}	
 	private boolean programPending(){return defPending();}
 
+	//General definitions
 	private Lexeme defs() throws LexException, SyntaxException {
 		Lexeme head = def();
 		Lexeme following = defPending() ? defs() : null;
 		return new Lexeme(Type.defs, head, following);
 	}
-
 	private Lexeme def() throws LexException, SyntaxException {
 		if (varDefPending())  return varDef();
 		if (funcDefPending()) return funcDef();
@@ -34,10 +34,61 @@ public class Parser {
 			classDefPending();
 	}
 
+	//Classes
+	private Lexeme classDef() throws LexException, SyntaxException {
+		match(Type.CLASS);
+		Lexeme className = match(Type.IDENTIFIER);
+		Lexeme superclassName = null;
+		if (check(Type.EXTENDS)) {
+			advance();
+			superclassName = match(Type.IDENTIFIER);
+		}
+		match(Type.OCURLY);
+		Lexeme body = program();
+		match(Type.CCURLY);
+		Lexeme cls = new Lexeme(Type.classDef, className, body);
+
+		if (superclassName != null) return new Lexeme(Type.subclassDef, superclassName, cls);
+		return cls;
+
+
+	}
+	private boolean classDefPending() {return check(Type.CLASS);}
+
+	//Named functions
+	private Lexeme funcDef() throws LexException, SyntaxException {
+		match(Type.DEFINE);
+		Lexeme id = match(Type.IDENTIFIER);
+		Lexeme body = funcBody();
+
+		return new Lexeme(Type.funcDef, id, body);
+	}
+	private boolean funcDefPending() {return check(Type.DEFINE);}
+	private Lexeme funcBody() throws LexException, SyntaxException {
+		match(Type.OPAREN);
+		Lexeme params = null;
+		if (paramsListPending()) params = paramsList();
+		match(Type.CPAREN);
+		Lexeme statements = block();
+		return new Lexeme(Type.funcBody, params, statements);
+	}
+	private Lexeme paramsList() throws LexException, SyntaxException {
+		match(Type.VAR);
+		Lexeme param = match(Type.IDENTIFIER);		
+
+		if (check(Type.COMMA)) {
+			advance();
+			return new Lexeme(Type.paramsList, param, paramsList());
+		}
+		return new Lexeme(Type.paramsList, param, null);
+	}
+	private boolean paramsListPending() {return check(Type.VAR);}
+
+
+
 	private Lexeme varDef() throws LexException, SyntaxException {
 		match(Type.VAR);
 		Lexeme id = match(Type.IDENTIFIER);
-
 		Lexeme expr = null;
 		if (check(Type.ASSIGN)) {
 			advance();
@@ -48,16 +99,87 @@ public class Parser {
 	}
 	private boolean varDefPending() { return check(Type.VAR); }
 
-	private Lexeme exprList() throws LexException, SyntaxException {
-		Lexeme expr = expression();
-		Lexeme remaining = null;
-		if (check(Type.COMMA)) {
-			advance();
-			remaining = exprList();
+	//Blocks and statements
+	private Lexeme block() throws LexException, SyntaxException {
+		if (check(Type.OCURLY)) {
+			Lexeme ocurly = advance();
+			Lexeme stmts = statementsPending() ? statements() : null;
+			match(Type.CCURLY);
+			Lexeme blk = new Lexeme(Type.block, null, stmts, ocurly.lineNumber);
+			return blk;
 		}
-		return new Lexeme(Type.exprList, expr, remaining);
+
+		return statement();
+	}
+	private boolean blockPending() { return check(Type.OCURLY) || statementPending(); }
+	private Lexeme statements() throws LexException, SyntaxException {
+		Lexeme stmt = statement();
+		Lexeme following = statementsPending() ? statements() : null;
+		return new Lexeme(Type.statements, stmt, following);
+
+	}
+	private boolean statementsPending() {return statementPending();}
+	private Lexeme statement() throws LexException, SyntaxException {
+		if (defPending())             return def();
+		if (returnStatementPending()) return returnStatement();
+
+		if (condStatementPending())   return condStatement();
+
+		if (whileStatementPending())  return whileStatement();
+
+		if (expressionPending()) {
+			Lexeme expr = expression();
+			match(Type.SEMICOLON);
+			return expr;
+		}
+
+		throw new SyntaxException(String.format(syntaxFmt, this.curr.lineNumber, "statement", this.curr.type));
+	}
+	private boolean statementPending() {
+		return  defPending()             ||
+			returnStatementPending() ||
+			condStatementPending()   ||
+			whileStatementPending()  ||
+			expressionPending()        ;
 	}
 
+	//Selection and iteration
+	private Lexeme condStatement() throws LexException, SyntaxException {
+		match(Type.IF);
+		match(Type.OPAREN);
+		Lexeme condition = expression();
+		match(Type.CPAREN);
+		Lexeme body = block();
+
+		Lexeme alt = null;
+		if (check(Type.ELSE)) {
+			advance();
+			alt = block();
+		}
+		return new Lexeme(Type.condStatement, body, alt);
+	}
+	private boolean condStatementPending() { return check(Type.IF); }
+	private Lexeme whileStatement() throws LexException, SyntaxException {
+		match(Type.WHILE);
+		match(Type.OPAREN);
+		Lexeme condition = expression();
+		match(Type.CPAREN);
+		Lexeme body = block();
+		return new Lexeme(Type.whileStatement, condition, body);
+	}
+	private boolean whileStatementPending() {return check(Type.WHILE);}
+
+	//Return statements
+	private Lexeme returnStatement() throws LexException, SyntaxException {
+		Lexeme returnKeyword = match(Type.RETURN);
+		Lexeme expr = expressionPending() ? expression() : null;
+		match(Type.SEMICOLON);
+		return new Lexeme(Type.returnStatement, null, expr, returnKeyword.lineNumber);
+	}
+	private boolean returnStatementPending() { return check(Type.RETURN); }
+
+
+	//Expressions
 	private Lexeme expression() throws LexException, SyntaxException {
 		Lexeme u = unary();
 		if (check(Type.OPAREN)) {
@@ -79,15 +201,20 @@ public class Parser {
 		}
 		return u;
 	}
+	private Lexeme exprList() throws LexException, SyntaxException {
+		Lexeme expr = expression();
+		Lexeme remaining = null;
+		if (check(Type.COMMA)) {
+			advance();
+			remaining = exprList();
+		}
+		return new Lexeme(Type.exprList, expr, remaining);
+	}
 	private boolean expressionPending() { return unaryPending(); }
+	private Lexeme operator() throws LexException, SyntaxException { return match(Group.BINARY); }
+	private boolean operatorPending() { return check(Group.BINARY); }
 
-	private Lexeme operator() throws LexException, SyntaxException {
-		return match(Group.BINARY);
-	}
-	private boolean operatorPending() {
-		return check(Group.BINARY);
-	}
-
+	//Unaries
 	private Lexeme unary() throws LexException, SyntaxException {
 		if (check(Type.MINUS)) {
 			Lexeme uMinus = Lexeme.toUminus(advance());
@@ -127,19 +254,6 @@ public class Parser {
 			check(Type.INTEGER)     ||
 			check(Type.STRING);
 	}
-
-
-
-	private Lexeme funcBody() throws LexException, SyntaxException {
-		match(Type.OPAREN);
-		Lexeme params = null;
-		if (paramsListPending()) params = paramsList();
-		match(Type.CPAREN);
-		Lexeme statements = block();
-		return new Lexeme(Type.funcBody, params, statements);
-
-	}
-
 	private Lexeme array() throws LexException, SyntaxException {
 		match(Type.OBRACK);
 		Lexeme elements = null;
@@ -148,7 +262,6 @@ public class Parser {
 		return new Lexeme(Type.array, null, elements);
 	}
 	private boolean arrayPending() { return check(Type.OBRACK); }
-
 	private Lexeme anonFunction() throws LexException, SyntaxException {
 		Lexeme lambdaKeyword = match(Type.LAMBDA);
 		Lexeme body = funcBody();
@@ -156,132 +269,11 @@ public class Parser {
 	}
 	private boolean anonFunctionPending() {return check(Type.LAMBDA);}
 
-	private Lexeme block() throws LexException, SyntaxException {
-		if (check(Type.OCURLY)) {
-			Lexeme ocurly = advance();
-			Lexeme stmts = statementsPending() ? statements() : null;
-			match(Type.CCURLY);
-			Lexeme blk = new Lexeme(Type.block, null, stmts, ocurly.lineNumber);
-			return blk;
-		}
 
-		return statement();
-	}
-	private boolean blockPending() { return check(Type.OCURLY) || statementPending(); }
-
-
-	private Lexeme statements() throws LexException, SyntaxException {
-		Lexeme stmt = statement();
-		Lexeme following = statementsPending() ? statements() : null;
-		return new Lexeme(Type.statements, stmt, following);
-
-	}
-	private boolean statementsPending() {return statementPending();}
-
-	private Lexeme statement() throws LexException, SyntaxException {
-		if (defPending())             return def();
-		if (returnStatementPending()) return returnStatement();
-
-		if (condStatementPending())   return condStatement();
-
-		if (whileStatementPending())  return whileStatement();
-
-		if (expressionPending()) {
-			Lexeme expr = expression();
-			match(Type.SEMICOLON);
-			return expr;
-		}
-
-		throw new SyntaxException(String.format(syntaxFmt, this.curr.lineNumber, "statement", this.curr.type));
-	}
-	private boolean statementPending() {
-		return  defPending()             ||
-			returnStatementPending() ||
-			condStatementPending()   ||
-			whileStatementPending()  ||
-			expressionPending()        ;
-	}
-
-	private Lexeme whileStatement() throws LexException, SyntaxException {
-		match(Type.WHILE);
-		match(Type.OPAREN);
-		Lexeme condition = expression();
-		match(Type.CPAREN);
-		Lexeme body = block();
-		return new Lexeme(Type.whileStatement, condition, body);
-	}
-	private boolean whileStatementPending() {return check(Type.WHILE);}
-
-	private Lexeme condStatement() throws LexException, SyntaxException {
-		match(Type.IF);
-		match(Type.OPAREN);
-		Lexeme condition = expression();
-		match(Type.CPAREN);
-		Lexeme body = block();
-
-		Lexeme alt = null;
-		if (check(Type.ELSE)) {
-			advance();
-			alt = block();
-		}
-		return new Lexeme(Type.condStatement, body, alt);
-	}
-	private boolean condStatementPending() { return check(Type.IF); }
-
-	private Lexeme returnStatement() throws LexException, SyntaxException {
-		Lexeme returnKeyword = match(Type.RETURN);
-		Lexeme expr = expressionPending() ? expression() : null;
-		match(Type.SEMICOLON);
-		return new Lexeme(Type.returnStatement, null, expr, returnKeyword.lineNumber);
-	}
-	private boolean returnStatementPending() { return check(Type.RETURN); }
-
-
-
-	private Lexeme paramsList() throws LexException, SyntaxException {
-		match(Type.VAR);
-		Lexeme param = match(Type.IDENTIFIER);		
-
-		if (check(Type.COMMA)) {
-			advance();
-			return new Lexeme(Type.paramsList, param, paramsList());
-		}
-		return new Lexeme(Type.paramsList, param, null);
-	}
-	private boolean paramsListPending() {return check(Type.VAR);}
-
-	private Lexeme funcDef() throws LexException, SyntaxException {
-		match(Type.DEFINE);
-		Lexeme id = match(Type.IDENTIFIER);
-		Lexeme body = funcBody();
-
-		return new Lexeme(Type.funcDef, id, body);
-	}
-	private boolean funcDefPending() {return check(Type.DEFINE);}
-
-	private Lexeme classDef() throws LexException, SyntaxException {
-		match(Type.CLASS);
-		Lexeme className = match(Type.IDENTIFIER);
-		Lexeme superclassName = null;
-		if (check(Type.EXTENDS)) {
-			advance();
-			superclassName = match(Type.IDENTIFIER);
-		}
-		match(Type.OCURLY);
-		Lexeme body = program();
-		match(Type.CCURLY);
-		Lexeme cls = new Lexeme(Type.classDef, className, body);
-
-		if (superclassName != null) return new Lexeme(Type.subclassDef, superclassName, cls);
-		return cls;
-
-
-	}
-	private boolean classDefPending() {return check(Type.CLASS);}
-
-
+	//Input processing
 	private Lexer lexer;
 	private Lexeme curr;
+	private static final String syntaxFmt = "Error on line %d: Expected %s, found %s";
 
 	/**
 	 * @return The matched lexeme
@@ -318,5 +310,4 @@ public class Parser {
 	}
 
 
-	private static final String syntaxFmt = "Error on line %d: Expected %s, found %s";
 }
