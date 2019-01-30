@@ -28,13 +28,19 @@ public class Recognizer {
 		}
 		catch (java.io.FileNotFoundException e) {
 			System.out.printf("The file %s does not exist.", path);
+			System.out.println();
+			System.exit(100);
 		}
 		catch (java.io.IOException e) {
 			System.out.println("An error closing the file occurred.");
+			System.exit(101);
 		}
 
 		if (legal) System.out.println("legal");
-		else       System.out.println("illegal");
+		else {
+			System.out.println("illegal");
+			System.exit(1);
+		}
 
 	}
 
