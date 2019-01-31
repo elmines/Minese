@@ -186,14 +186,20 @@ public class Parser {
 			advance();
 			Lexeme args = exprList();
 			match(Type.CPAREN);
-			return new Lexeme(Type.funcCall, u, args);
+			Lexeme funcCall = new Lexeme(Type.funcCall, u, args);
+
+			u = funcCall;
 		}
 		if (check(Type.OBRACK)) {
 			advance();
 			Lexeme index = expression();
 			match(Type.CBRACK);
-			return new Lexeme(Type.arrayElement, u, index);
+			Lexeme element = new Lexeme(Type.arrayElement, u, index);
+
+			u = element;
 		}
+
+
 		if (operatorPending()) {
 			Lexeme op = operator();
 			op.setRight(expression());

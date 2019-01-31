@@ -1,0 +1,39 @@
+define sum(var x, var nums) {
+	define localFunc(var a, var b) return a*b;
+
+
+	return 3 + 5(x, localFunc(nums[0], nums[1+5]) );
+
+}
+
+define description(var x) {
+
+	if (x % 2 == 0) {
+		print("X is even!"); print("Don't you love even numbers?");
+	}
+
+	if (x < 0)            return "negative";
+	else if (x == 0)      return "zero";
+	else if (x > 0)       return "positive";
+	else {
+		print("What was that supposed to be?");
+		return "Apparently x isn't a number.";
+	}
+
+}
+
+define countdown(var start) {
+	var orig = start;
+	while (start > 0) {
+		print(start);
+		start = start - 1;
+	}
+	print("LIFTOFF!");
+	while ( (start = start + 1) < orig ) print(start);
+	print("SOMETHING ELSE");
+}
+
+var y = ["Ethan", 4 + 6, 5];
+var z = [];
+
+var func = lambda(var a, var b) return a * b; ;

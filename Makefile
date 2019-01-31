@@ -8,6 +8,8 @@ recognizer: Recognizer.class scriptText.txt
 	cp scriptText.txt recognizer
 	chmod +x recognizer
 
+test: run
+
 run: test1 test2 test3 test4 test5
 
 test1: recognizer

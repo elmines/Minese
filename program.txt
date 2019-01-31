@@ -50,7 +50,7 @@ main(args) {
 	var classroom = Rectangle(10, 4);
 
 	//Define an anonymous function
-	var isEven = (var rectangle) {
+	var isEven = lambda(var rectangle) {
 		if (rectangle.area() % 2 == 0) return true;
 		else                           return false;
 	}

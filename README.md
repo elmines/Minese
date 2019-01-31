@@ -47,7 +47,7 @@ define main() {
 
 
 	//An anonymous function
-	var summation = (var accumulator, var operand) return accumulator + operand;
+	var summation = lambda(var accumulator, var operand) return accumulator + operand; ;
 
 	//A local, named function
 	define reduce(var values, var reduction) {
@@ -72,3 +72,10 @@ define main() {
 - test3.min: Rather awkward whitespace and comments
 - test4.min: Boolean expressions
 - test5.min: Program with illegal character $
+
+## Parser Test Cases
+- test1.min: A more complicated program utilizing most of the program's features (legal)
+- test2.min: Control flow and loops (legal)
+- test3.min: Extensive nesting of functions (legal)
+- test4.min: A subclass missing the superclass name in its header (illegal)
+- test5.min: An arithmetic expression where a comma was used instead of an operator (illegal)

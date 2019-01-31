@@ -1,0 +1,27 @@
+class X {
+	var y;
+
+	define constructor(var Y) {
+		y = Y;
+	}
+
+	class Y extends Z {
+
+		define sum(var x, var y) return x + y;
+	}
+}
+
+define main(var args) {
+
+	//Extends what? That's a syntax error.
+	class Q extends {
+		var u;
+
+		define constructor(var Y, var U) {
+			super(Y);
+			u = U;
+		}
+
+	}
+
+}

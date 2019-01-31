@@ -70,9 +70,12 @@ returnStatement : RETURN expression SEMICOLON
 
 
 expression : unary
-           | unary funcCall
-           | unary index
+           | unary funcCall optOperation
+           | unary index    optOperation
            | unary operator expression
+
+optOperation: NONE
+	    | operator expression
 
 funcCall: OPAREN optExprList CPAREN
 

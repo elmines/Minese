@@ -1,0 +1,23 @@
+
+define main(var args) {
+
+	define nestedA(var x) {
+		define nestedB(var y) {
+			define nestedC(var z) {
+				var f = lambda(var q) {
+					var z = q * z + 3;
+					if (z < 0) return -z;
+					else       return z * z;
+				};
+				return f(y) + x[2] + 8;
+			}
+		}
+
+		class Person {
+			define constructor(var a) {
+				age = a * x;
+			}
+			var age;
+		}
+	}
+}
