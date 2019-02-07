@@ -8,7 +8,9 @@ OPTS=-Xlint
 run: TestEnv.class
 	$(JVM) TestEnv
 
-TestEnv.class: TestEnv.java Environment.class EnvException.class
+test: run
+
+TestEnv.class: TestEnv.java Environment.class EnvException.class Lexeme.class Type.class
 	$(COMP) $(OPTS) TestEnv.java
 
 Parser.class: Parser.java Type.class Group.class Lexer.class Lexeme.class \

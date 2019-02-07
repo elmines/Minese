@@ -41,23 +41,6 @@ public class Environment extends Lexeme {
 		return oldVal;
 	}
 
-	private Lexeme getValLeaf(String id) throws EnvException {
-		Environment env = this;
-		while (env != null) {
-			Lexeme ids = env.caar();
-			Lexeme vals = env.cdar();
-
-			while (ids != null) {
-				String candId = (String) ids.car().value();
-				if (id.equals(candId)) return vals.car();
-
-				ids = ids.cdr();
-				vals = vals.cdr();
-			}
-			env = (Environment) env.cdr();
-		}
-		throw new EnvException("Undefined variable "+id);
-	}
 
 	public Environment newScope(Lexeme ids, Lexeme vals) {
 		Environment local = new Environment();
@@ -106,6 +89,24 @@ public class Environment extends Lexeme {
 			firstLine = false;
 		}
 		return sb.toString();
+	}
+
+	private Lexeme getValLeaf(String id) throws EnvException {
+		Environment env = this;
+		while (env != null) {
+			Lexeme ids = env.caar();
+			Lexeme vals = env.cdar();
+
+			while (ids != null) {
+				String candId = (String) ids.car().value();
+				if (id.equals(candId)) return vals.car();
+
+				ids = ids.cdr();
+				vals = vals.cdr();
+			}
+			env = (Environment) env.cdr();
+		}
+		throw new EnvException("Undefined variable "+id);
 	}
 
 }
