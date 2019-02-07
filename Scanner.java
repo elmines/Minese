@@ -23,7 +23,7 @@ public class Scanner {
 
 			Lexeme lexeme = lexer.lex();
 			while (lexeme.type != Type.EOF) {
-				System.out.println(lexeme);
+				System.out.println(lexeme.lexString());
 				lexeme = lexer.lex();
 			}
 		}

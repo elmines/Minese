@@ -46,6 +46,11 @@ public enum Type {
 
 	block,
 	statements,
-	returnStatement
+	returnStatement,
+
+	environment,
+	TABLE,
+
+	IDNODE, VALNODE,
 }
 
