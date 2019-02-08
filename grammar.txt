@@ -1,28 +1,23 @@
-program : optDefs
+program : NONE
+        | defs
 
-optDefs : NONE
-	| defs
+defs : def
+     | def defs
 
-defs : definition
-     | definition defs
-
-definition : classDef
-           | functionDef
-           | varDef
+def : classDef
+    | funcDef
+    | varDef
 
 
 
-classDef : CLASS IDENTIFIER optExtension OCURLY classBody CCURLY
+classDef : CLASS IDENTIFIER OCURLY program CCURLY
+         | subclassDef
 
-optExtension : NONE
-             | EXTENDS IDENTIFIER
-
-classBody : definition
-          | definition classBody
+subclassDef : CLASS IDENTIFIER EXTENDS IDENTIFIER OCURLY program CCURLY
 
 
 
-functionDef : DEFINE IDENTIFIER funcBody
+funcDef : DEFINE IDENTIFIER funcBody
 
 funcBody: OPAREN optParamsList CPAREN block
 
@@ -56,26 +51,38 @@ statement : definition
           | returnStatement
           | expression  SEMICOLON
 
-
-
 condStatement : IF OPAREN expression CPAREN block |
               : IF OPAREN expression CPAREN block ELSE block
 
 whileStatement : WHILE OPAREN expression CPAREN block
 
-
-
 returnStatement : RETURN expression SEMICOLON
                 | RETURN SEMICOLON
 
 
-expression : unary
+
+expression : unary optOperation
            | unary funcCall optOperation
            | unary index    optOperation
-           | unary operator expression
 
 optOperation: NONE
 	    | operator expression
+
+operator : PLUS
+         | TIMES
+         | MINUS
+         | DIV
+         | MOD
+         | LT
+         | LTE
+	 | NEQ
+         | EQ
+         | GTE
+         | GT
+         | ASSIGN
+         | DOT
+         | AND
+         | OR
 
 funcCall: OPAREN optExprList CPAREN
 
@@ -105,19 +112,3 @@ anonFunction : LAMBDA funcBody
 
 boolean : TRUE
         | FALSE
-
-operator : PLUS
-         | TIMES
-         | MINUS
-         | DIV
-         | MOD
-         | LT
-         | LTE
-	 | NEQ
-         | EQ
-         | GTE
-         | GT
-         | ASSIGN
-         | DOT
-         | AND
-         | OR

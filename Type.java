@@ -21,32 +21,29 @@ public enum Type {
 
 	//Nonterminals
 	program,
-	varDef,
-	funcDef,
-	classDef,
-	expression,
-	unary,
-	anonFunction,
-
 	defs,
-
 	subclassDef,
+	varDef, funcDef, classDef,
 
+	expression, unary,
+
+	anonFunction,
 	array,
-
 	condStatement,
 	whileStatement,
-
 	funcCall,
 	arrayElement,
-
 	funcBody,
 	paramsList,
 	exprList,
 
+
 	block,
 	statements,
 	returnStatement,
+
+
+	//Non-lexical types
 
 	environment,
 	TABLE,
