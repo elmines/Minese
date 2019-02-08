@@ -5,13 +5,15 @@ JVM=java
 COMP=javac
 OPTS=-Xlint
 
+
+TestEnv.class: TestEnv.java Environment.class EnvException.class Lexeme.class Type.class
+	$(COMP) $(OPTS) TestEnv.java
+
 run: TestEnv.class
 	$(JVM) TestEnv
 
 test: run
 
-TestEnv.class: TestEnv.java Environment.class EnvException.class Lexeme.class Type.class
-	$(COMP) $(OPTS) TestEnv.java
 
 Parser.class: Parser.java Type.class Group.class Lexer.class Lexeme.class \
 		 LexException.class SyntaxException.class

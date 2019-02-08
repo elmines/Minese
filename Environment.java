@@ -2,79 +2,70 @@
  * Ethan Mines
  * CS503 - Lusth
  */
-public class Environment extends Lexeme {
+public class Environment {
 
-	public Environment() {
-		super(Type.environment,
-			new Lexeme(Type.TABLE, null, null),
-			null
+	public static Lexeme newEnvironment() {
+		return Lexeme.cons(Type.environment,
+					Lexeme.cons(Type.TABLE, null, null),
+					null
 		);
+
 	}
 
 
 	/**
 	 * @return The inserted value
 	 */
-	public Object insert(String id, Object value) {
-
-		Lexeme idLeaf = new Lexeme(Type.IDENTIFIER, id);
-		Lexeme valLeaf = new Lexeme(value);
-
-		this.car().setCar( new Lexeme(Type.IDNODE,   idLeaf, this.caar()) );
-		this.car().setCdr( new Lexeme(Type.VALNODE, valLeaf, this.cdar()) );
-
+	public static Object insert(Lexeme env, String id, Object value) {
+		Lexeme idLeaf = Lexeme.literal(Type.IDENTIFIER, id, -1);
+		Lexeme valLeaf = Lexeme.literal(Type.UNKNOWN, value, -1);
+		env.car().setCar( Lexeme.cons(Type.IDNODE,   idLeaf, env.caar()) );
+		env.car().setCdr( Lexeme.cons(Type.VALNODE, valLeaf, env.cdar()) );
 		return value;
 	}
 
-	public Object get(String id) throws EnvException {
-		Lexeme valLeaf = getValLeaf(id);
+	public static Object get(Lexeme env, String id) throws EnvException {
+		Lexeme valLeaf = getValLeaf(env, id);
 		return valLeaf.value();
 	}
 
 	/**
 	 * @return The old value previously there
 	 */
-	public Object set(String id, Object val) throws EnvException {
-		Lexeme valLeaf = getValLeaf(id);
+	public static Object set(Lexeme env, String id, Object val) throws EnvException {
+		Lexeme valLeaf = getValLeaf(env, id);
 		Object oldVal = valLeaf.value();
 		valLeaf.setValue(val);	
 		return oldVal;
 	}
 
 
-	public Environment newScope(Lexeme ids, Lexeme vals) {
-		Environment local = new Environment();
-		local.setCar( new Lexeme(Type.TABLE, ids, vals) );
-		local.setCdr( this );
+	public static Lexeme newScope(Lexeme env, Lexeme ids, Lexeme vals) {
+		Lexeme local = Environment.newEnvironment();
+		local.setCar( Lexeme.cons(Type.TABLE, ids, vals) );
+		local.setCdr( env );
 		return local;
 	}
 
-	public void displayLocal() {
-		System.out.println(this.toString());
+	public static void displayLocal(Lexeme env) {
+		System.out.println(Environment.toString(env));
 	}
 
-	public void displayFull() {
-
+	public static void displayFull(Lexeme env) {
 		String indentation = "";
-		Environment env = this;
-
 		while (env != null) {
-
-			String unindented = env.toString();
+			String unindented = Environment.toString(env);
 			String indented = indentation + unindented.replaceAll("\n", "\n"+indentation);
 			System.out.println(indented);
-
-			env = (Environment) env.cdr();
+			env = env.cdr();
 			indentation += "\t";
 		}
-
 	}
 
-	@Override
-	public String toString() {
+	public static String toString(Lexeme env) {
 		StringBuilder sb = new StringBuilder();
-		Lexeme ids = this.caar();
-		Lexeme vals = this.cdar();
+		Lexeme ids = env.caar();
+		Lexeme vals = env.cdar();
 
 		boolean firstLine = true;
 		while (ids != null) {
@@ -91,8 +82,7 @@ public class Environment extends Lexeme {
 		return sb.toString();
 	}
 
-	private Lexeme getValLeaf(String id) throws EnvException {
-		Environment env = this;
+	private static Lexeme getValLeaf(Lexeme env, String id) throws EnvException {
 		while (env != null) {
 			Lexeme ids = env.caar();
 			Lexeme vals = env.cdar();
@@ -104,7 +94,7 @@ public class Environment extends Lexeme {
 				ids = ids.cdr();
 				vals = vals.cdr();
 			}
-			env = (Environment) env.cdr();
+			env = env.cdr();
 		}
 		throw new EnvException("Undefined variable "+id);
 	}

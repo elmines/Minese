@@ -7,6 +7,35 @@ class Lexeme {
 	public final Type type;
 	public final int lineNumber;
 
+	/**
+	 * Construct a nonterminal lexeme, with its linenumber inferred from its children
+	 */
+	public static Lexeme cons(Type type, Lexeme car, Lexeme cdr) {
+		return new Lexeme(type, null, car, cdr, inferLineNumber(car, cdr));
+	}
+
+	/**
+	 * Construct a lexeme representing a valueless, nonterminal symbol (like { or define)
+	 */
+	public static Lexeme symbol(Type type, int lineNumber) {
+		return new Lexeme(type, null, null, null, lineNumber);
+	}
+
+	/**
+	 * Construct a valued, atomic lexeme (an identifier, an integer literal, string literal, etc.)
+	 */
+	public static Lexeme literal(Type type, Object val, int lineNumber) {
+		return new Lexeme(type, val, null, null, lineNumber);
+	}
+
+	public Lexeme(Type type, Object val, Lexeme l, Lexeme r, int lineNumber) {
+		this.type = type;
+		this.val = val;
+		this.l = l;
+		this.r = r;
+		this.lineNumber = lineNumber;
+	}
+
 	/*
 	 * Construc a nonterminal lexeme
 	 */
@@ -24,9 +53,6 @@ class Lexeme {
 		this(type, l, r, inferLineNumber(l, r));
 	}
 
-	public Lexeme(int lineNumber, Type type) {
-		this(lineNumber, type, "");
-	}
 
 	public Lexeme(int lineNumber, Type type, Object value) {
 		this.lineNumber = lineNumber;

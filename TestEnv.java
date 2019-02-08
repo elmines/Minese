@@ -1,3 +1,4 @@
+import static Environment.*;
 
 public class TestEnv {
 
@@ -5,41 +6,38 @@ public class TestEnv {
 
 		System.out.println("Creating a root environment with variables "+
 			"z = 6, y = 5, x = 4...");
-		Environment a = new Environment();
-		a.insert("x", 4); a.insert("y", 5); a.insert("z", 6);
+		Lexeme a = Environment.newEnvironment();
+		Environment.insert(a, "x", 4);
+		Environment.insert(a, "y", 5);
+		Environment.insert(a, "z", 6);
 
 
 		System.out.println("Extending the environment with variable x = \"Four\"...");
-		Environment b = a.newScope(idList("x"), valList("Four"));
+		Lexeme b = Environment.newScope(a, idList("x"), valList("Four"));
 
 		System.out.println("Displaying the local environment...");
-		b.displayLocal();
+		Environment.displayLocal(b);
 
 		System.out.println("Displaying the full environment...");
-		b.displayFull();
+		Environment.displayFull(b);
 
-		System.out.printf("Getting the value of x: %s\n", (String) b.get("x") );
-		System.out.printf("Getting the value of z: %d\n", (Integer) b.get("z") );
+		System.out.printf("Getting the value of x: %s\n", (String) Environment.get(b, "x") );
+		System.out.printf("Getting the value of z: %d\n", (Integer) Environment.get(b, "z") );
 
 		System.out.printf("Setting the value of x to \"forty-two\"...\n");
-		b.set("x", "forty-two");
+		Environment.set("x", "forty-two");
 		System.out.println("Displaying the full environment...");
-		b.displayFull();
-
-		System.out.println("Inserting the function definition f...");
-		b.insert("f", new Lexeme(Type.funcDef));
-		System.out.println("Displaying the full environment...");
-		b.displayFull();
+		Environment.displayFull();
 
 
 		System.out.println("Extending the environment with variable z = \"six\"");
-		Environment c = b.newScope(idList("z"), valList("six"));
+		Lexeme c = Environment.newScope(b, idList("z"), valList("six"));
 		System.out.println("Displaying the local environment...");
 		c.displayLocal();
-		System.out.println("Inserting class definition Square...");
-		c.insert("Square", new Lexeme(Type.classDef));
-		System.out.println("Inserting the array primes...");
-		c.insert("primes", new Lexeme(Type.array));
+		System.out.println("Inserting a = \"the first letter\"...");
+		c.insert("a", "the first letter");
+		System.out.println("Inserting b = \"the second letter\"...");
+		c.insert("b", "the second letter");
 		System.out.println("Displaying the local environment...");
 		c.displayLocal();
 

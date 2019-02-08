@@ -22,10 +22,10 @@ test3: recognizer
 	./recognizer test3.min
 
 test4: recognizer
-	./recognizer test4.min
+	-./recognizer test4.min
 
 test5: recognizer
-	./recognizer test5.min
+	-./recognizer test5.min
 
 Recognizer.class: Recognizer.java Lexeme.class Parser.class LexException.class SyntaxException.class
 	$(COMP) $(OPTS) Recognizer.java
