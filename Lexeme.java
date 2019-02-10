@@ -108,6 +108,14 @@ class Lexeme {
 	public void setValue(Object v){this.val = v;}
 
 
+	@Override
+	public boolean equals(Object other) {
+		if (!(other instanceof Lexeme)) return false;
+
+		Lexeme that = (Lexeme) other;
+		return this.value().equals(that.value()) &&
+			this.type.equals(that.type);
+	}
 
 	@Override
 	public String toString() {

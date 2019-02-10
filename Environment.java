@@ -12,30 +12,29 @@ public class Environment {
 
 	}
 
-
 	/**
 	 * @return The inserted value
 	 */
-	public static Object insert(Lexeme env, String id, Object val) {
-		Lexeme idLeaf = Lexeme.literal(Type.IDENTIFIER, id, -1);
-		Lexeme valLeaf = Lexeme.literal(Type.UNKNOWN, val, -1);
-		env.car().setCar( Lexeme.cons(Type.IDNODE,   idLeaf, env.caar()) );
-		env.car().setCdr( Lexeme.cons(Type.VALNODE, valLeaf, env.cdar()) );
+	public static Lexeme insert(Lexeme env, Lexeme id, Lexeme val) {
+
+		env.car().setCar( Lexeme.cons(Type.IDNODE,   id, env.caar()) );
+		env.car().setCdr( Lexeme.cons(Type.VALNODE, val, env.cdar()) );
 		return val;
 	}
 
-	public static Object get(Lexeme env, String id) throws EnvException {
-		Lexeme valLeaf = getValLeaf(env, id);
-		return valLeaf.value();
+	public static Lexeme get(Lexeme env, Lexeme id) throws EnvException {
+		Lexeme parent = getValParent(env, id);
+		return parent.car();
 	}
+
 
 	/**
 	 * @return The old value previously there
 	 */
-	public static Object set(Lexeme env, String id, Object val) throws EnvException {
-		Lexeme valLeaf = getValLeaf(env, id);
-		Object oldVal = valLeaf.value();
-		valLeaf.setValue(val);	
+	public static Lexeme set(Lexeme env, Lexeme id, Lexeme val) throws EnvException {
+		Lexeme parent = getValParent(env, id);
+		Lexeme oldVal = parent.car();
+		parent.setCar(val);
 		return oldVal;
 	}
 
@@ -82,14 +81,14 @@ public class Environment {
 		return sb.toString();
 	}
 
-	private static Lexeme getValLeaf(Lexeme env, String id) throws EnvException {
+	private static Lexeme getValParent(Lexeme env, Lexeme id) throws EnvException {
 		while (env != null) {
 			Lexeme ids = env.caar();
 			Lexeme vals = env.cdar();
 
 			while (ids != null) {
-				String candId = (String) ids.car().value();
-				if (id.equals(candId)) return vals.car();
+				Lexeme candidate = ids.car();
+				if (id.equals(candidate)) return vals;
 
 				ids = ids.cdr();
 				vals = vals.cdr();
