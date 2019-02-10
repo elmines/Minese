@@ -16,12 +16,12 @@ public class Environment {
 	/**
 	 * @return The inserted value
 	 */
-	public static Object insert(Lexeme env, String id, Object value) {
+	public static Object insert(Lexeme env, String id, Object val) {
 		Lexeme idLeaf = Lexeme.literal(Type.IDENTIFIER, id, -1);
-		Lexeme valLeaf = Lexeme.literal(Type.UNKNOWN, value, -1);
+		Lexeme valLeaf = Lexeme.literal(Type.UNKNOWN, val, -1);
 		env.car().setCar( Lexeme.cons(Type.IDNODE,   idLeaf, env.caar()) );
 		env.car().setCdr( Lexeme.cons(Type.VALNODE, valLeaf, env.cdar()) );
-		return value;
+		return val;
 	}
 
 	public static Object get(Lexeme env, String id) throws EnvException {
