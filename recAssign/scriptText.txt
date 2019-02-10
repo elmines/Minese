@@ -3,4 +3,4 @@
 # Ethan Mines
 # CS503 - Lusth
 
-java Recognizer $1
+java TestRec $1

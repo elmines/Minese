@@ -4,7 +4,7 @@
 COMP=javac
 OPTS=-Xlint
 
-recognizer: Recognizer.class scriptText.txt
+recognizer: TestRec.class scriptText.txt
 	cp scriptText.txt recognizer
 	chmod +x recognizer
 
@@ -27,12 +27,12 @@ test4: recognizer
 test5: recognizer
 	-./recognizer test5.min
 
-Recognizer.class: Recognizer.java Lexeme.class Parser.class LexException.class SyntaxException.class
-	$(COMP) $(OPTS) Recognizer.java
+TestRec.class: TestRec.java Lexeme.class Recognizer.class LexException.class SyntaxException.class
+	$(COMP) $(OPTS) TestRec.java
 
-Parser.class: Parser.java Type.class Group.class Lexer.class Lexeme.class \
+Recognizer.class: Recognizer.java Type.class Group.class Lexer.class Lexeme.class \
 		 LexException.class SyntaxException.class
-	$(COMP) $(OPTS) Parser.java
+	$(COMP) $(OPTS) Recognizer.java
 
 Lexer.class: Lexer.java Lexeme.class Type.class LexException.class
 	$(COMP) $(OPTS) Lexer.java
