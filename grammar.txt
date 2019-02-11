@@ -62,8 +62,8 @@ returnStatement : RETURN expression SEMICOLON
 
 
 expression : unary optOperation
-           | unary funcCall optOperation
-           | unary index    optOperation
+	   | unary operator expression 
+
 
 optOperation: NONE
 	    | operator expression
@@ -84,7 +84,6 @@ operator : PLUS
          | AND
          | OR
 
-funcCall: OPAREN optExprList CPAREN
 
 optExprList : NONE
             | exprList
@@ -92,19 +91,23 @@ optExprList : NONE
 exprList : expression
          | expression COMMA exprList
 
-index:    OBRACK expression CBRACK
-
-
 
 unary: UMINUS unary
      | NOT    unary
      | OPAREN expression CPAREN
+     | idOperation
      | array
      | anonFunction
      | IDENTIFIER
      | boolean
      | INTEGER
      | STRING
+
+
+idOperation: IDENTIFIER
+           | IDENTIFIER OPAREN optExprList CPAREN
+           | IDENTIFIER OBRACK expression CBRACK
+
 
 array : OBRACK exprList CBRACK
 

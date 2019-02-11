@@ -1,6 +1,6 @@
 
 //Any unary could theoretically be callable
-var x = ("Ethan" + 3 - 6)(firstArgument, secondArgument);
+var x = Ethan(firstArgument, secondArgument);
 
 //This, on the other hand, is erroneous
 var y = 6 + 5 + 2 * (firstArgument, secondArgument);

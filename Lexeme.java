@@ -111,10 +111,15 @@ class Lexeme {
 	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof Lexeme)) return false;
-
 		Lexeme that = (Lexeme) other;
-		return this.value().equals(that.value()) &&
-			this.type.equals(that.type);
+
+		if (!this.type.equals(that.type)) return false;
+
+		if (this.value() == null && that.value() == null) return true;
+		else if (this.value().equals(that.value())) return true;
+
+		return false;
+
 	}
 
 	@Override

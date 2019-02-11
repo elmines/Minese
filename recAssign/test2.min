@@ -2,7 +2,7 @@ define sum(var x, var nums) {
 	define localFunc(var a, var b) return a*b;
 
 
-	return 3 + 5(x, localFunc(nums[0], nums[1+5]) );
+	return 3 + f(x, localFunc(nums[0], nums[1+5]) );
 
 }
 

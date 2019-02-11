@@ -182,24 +182,6 @@ public class Parser {
 	//Expressions
 	private Lexeme expression() throws LexException, SyntaxException {
 		Lexeme u = unary();
-		if (check(Type.OPAREN)) {
-			advance();
-			Lexeme args = exprList();
-			match(Type.CPAREN);
-			Lexeme funcCall = Lexeme.cons(Type.funcCall, u, args);
-
-			u = funcCall;
-		}
-		if (check(Type.OBRACK)) {
-			advance();
-			Lexeme index = expression();
-			match(Type.CBRACK);
-			Lexeme element = Lexeme.cons(Type.arrayElement, u, index);
-
-			u = element;
-		}
-
-
 		if (operatorPending()) {
 			Lexeme op = operator();
 			op.setRight(expression());
@@ -236,11 +218,9 @@ public class Parser {
 			match(Type.CPAREN);
 			return expr;
 		}
+		if (idOperationPending())   return idOperation();
 		if (arrayPending())         return array();
-
 		if (anonFunctionPending())  return anonFunction();
-
-		if (check(Type.IDENTIFIER)) return advance();
 		if (check(Type.BOOLEAN))    return advance();
 		if (check(Type.INTEGER))    return advance();
 		if (check(Type.STRING))     return advance();
@@ -253,13 +233,33 @@ public class Parser {
 		return  check(Type.MINUS)       ||
 			check(Type.NOT)         ||
 			check(Type.OPAREN)      ||
+			idOperationPending()    ||
 			arrayPending()          ||
 			anonFunctionPending()   ||
-			check(Type.IDENTIFIER)  ||
 			check(Type.BOOLEAN)     ||
 			check(Type.INTEGER)     ||
 			check(Type.STRING);
 	}
+	private Lexeme idOperation() throws LexException, SyntaxException {
+		Lexeme id = match(Type.IDENTIFIER);
+
+		if (check(Type.OPAREN)) {
+			advance();
+			Lexeme args = exprList();
+			match(Type.CPAREN);
+			return Lexeme.cons(Type.funcCall, id, args);
+		}
+		if (check(Type.OBRACK)) {
+			advance();
+			Lexeme index = expression();
+			match(Type.CBRACK);
+			return Lexeme.cons(Type.arrayElement, id, index);
+		}
+
+		return id;
+	}
+	private boolean idOperationPending() { return check(Type.IDENTIFIER); }
+
 	private Lexeme array() throws LexException, SyntaxException {
 		match(Type.OBRACK);
 		Lexeme elements = null;
