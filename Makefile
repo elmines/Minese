@@ -1,0 +1,53 @@
+# Ethan Mines
+# CS503 - Lusth
+
+JVM=java
+COMP=javac
+OPTS=-Xlint
+
+test: Minese.class
+	$(JVM) Minese test1.min
+
+Minese.class: Minese.java Evaluator.class Environment.class Lexeme.class Parser.class \
+		EvalException.class
+	$(COMP) $(OPTS) Minese.java
+
+Evaluator.class: Evaluator.java Lexeme.class Environment.class EvalException.class
+	$(COMP) $(OPTS) Evaluator.java
+
+BuiltIns.class: BuiltIns.java Lexeme.class
+	$(COMP) $(OPTS) BuiltIns.java
+
+Environment.class: Environment.java Type.class Lexeme.class EnvException.class
+	$(COMP) $(OPTS) Environment.java
+
+Parser.class: Parser.java Type.class Group.class Lexer.class Lexeme.class \
+		 LexException.class SyntaxException.class
+	$(COMP) $(OPTS) Parser.java
+
+Lexer.class: Lexer.java Lexeme.class Type.class LexException.class
+	$(COMP) $(OPTS) Lexer.java
+
+Lexeme.class: Lexeme.java Type.class
+	$(COMP) $(OPTS) Lexeme.java
+
+Group.class: Group.java Type.class
+	$(COMP) $(OPTS) Group.java
+
+Type.class: Type.java
+	$(COMP) $(OPTS) Type.java
+
+LexException.class: LexException.java
+	$(COMP) $(OPTS) LexException.java
+
+SyntaxException.class: SyntaxException.java
+	$(COMP) $(OPTS) SyntaxException.java
+
+EnvException.class: EnvException.java
+	$(COMP) $(OPTS) EnvException.java
+
+EvalException.class: EvalException.java
+	$(COMP) $(OPTS) EvalException.java
+
+clean:
+	rm *.class
