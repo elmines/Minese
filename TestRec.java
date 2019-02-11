@@ -19,7 +19,7 @@ public class TestRec {
 
 		boolean legal = true;
 		try (PushbackInputStream in = new PushbackInputStream(new FileInputStream(path))) {
-			Recognizer p = new Recognizer(in);
+			Parser p = new Parser(in);
 			Lexeme prog = p.program();
 		}
 		catch (SyntaxException | LexException e) {
