@@ -1,5 +1,11 @@
+import java.util.Map;
+import java.util.HashMap;
+
 public final class BuiltIns {
 
+	public static final Map<String, BuiltIn> funcMap = new HashMap<String, BuiltIn>(){{
+		put("print", BuiltIns::print);
+	}};
 
 	public static Lexeme print(Lexeme args) {
 

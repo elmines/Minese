@@ -3,7 +3,7 @@
 
 JVM=java
 COMP=javac
-OPTS=-Xlint
+OPTS=-Xlint -g
 
 test: Minese.class
 	$(JVM) Minese test1.min
@@ -17,6 +17,8 @@ Evaluator.class: Evaluator.java Lexeme.class Environment.class EvalException.cla
 
 BuiltIns.class: BuiltIns.java Lexeme.class
 	$(COMP) $(OPTS) BuiltIns.java
+BuiltIn.class: BuiltIn.java Lexeme.class
+	$(COMP) $(OPTS) BuiltIn.java
 
 Environment.class: Environment.java Type.class Lexeme.class EnvException.class
 	$(COMP) $(OPTS) Environment.java

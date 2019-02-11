@@ -103,22 +103,20 @@ public class Parser {
 	private Lexeme block() throws LexException, SyntaxException {
 		if (check(Type.OCURLY)) {
 			Lexeme ocurly = advance();
-			Lexeme stmts = statementsPending() ? statements() : null;
+			Lexeme stmts = statementPending() ? statements() : null;
 			match(Type.CCURLY);
-			Lexeme blk = Lexeme.cons(Type.block, null, stmts);
-			return blk;
+			return stmts;
 		}
+		return statements();
 
-		return statement();
 	}
 	private boolean blockPending() { return check(Type.OCURLY) || statementPending(); }
 	private Lexeme statements() throws LexException, SyntaxException {
 		Lexeme stmt = statement();
-		Lexeme following = statementsPending() ? statements() : null;
+		Lexeme following = statementPending() ? statements() : null;
 		return Lexeme.cons(Type.statements, stmt, following);
 
 	}
-	private boolean statementsPending() {return statementPending();}
 	private Lexeme statement() throws LexException, SyntaxException {
 		if (defPending())             return def();
 		if (returnStatementPending()) return returnStatement();

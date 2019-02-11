@@ -15,8 +15,7 @@ public class Minese {
 		}
 		final String path = args[0];
 
-		Lexeme mainFuncClosure = Lexeme.cons(Type.CLOSURE, Lexeme.literal(Type.IDENTIFIER, "main", -1), null);
-		Lexeme mainFuncCall = Lexeme.cons(Type.funcCall, mainFuncClosure, null);
+		Lexeme mainFuncCall = Lexeme.cons(Type.funcCall, Lexeme.literal(Type.IDENTIFIER, "main", -1), null);
 
 
 		Lexeme programTree;
@@ -29,8 +28,7 @@ public class Minese {
 
 		}
 		catch (Exception e) {
-			System.out.println("Caught an exception.");
-			System.out.println(e.getMessage());
+			e.printStackTrace(System.out);
 		}
 
 	}
