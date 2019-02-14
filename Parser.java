@@ -182,8 +182,9 @@ public class Parser {
 		Lexeme u = unary();
 		if (operatorPending()) {
 			Lexeme op = operator();
+			op.setLeft(u);
 			op.setRight(expression());
-			return Lexeme.cons(Type.expression, u, op);
+			return op;
 		}
 		return u;
 	}

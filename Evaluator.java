@@ -17,6 +17,8 @@ public class Evaluator {
 
 		if (tree.type == Type.IDENTIFIER) return Environment.get(env, tree);
 
+		if (Group.BINARY.contains(tree.type)) return evalBinary(tree, env);
+
 
 		if (tree.type == Type.statements) {
 			Lexeme stmt = tree.car();
@@ -44,7 +46,85 @@ public class Evaluator {
 		throw new EvalException( String.format("Invalid evaluation item %s", tree) );
 
 	}
-	//
+
+	private static Lexeme evalBinary(Lexeme tree, Lexeme env) throws EnvException, EvalException {
+		Lexeme op = tree;
+		Lexeme left  = op.car();
+		Lexeme right = op.cdr();
+
+		if (op.type == Type.PLUS) return evalPlus(left, right, env);
+		if (op.type == Type.MINUS) return evalMinus(left, right, env);
+		if (op.type == Type.TIMES) return evalTimes(left, right, env);
+		if (op.type == Type.DIV) return evalDiv(left, right, env);
+		if (op.type == Type.MOD) return evalMod(left, right, env);
+
+		if (op.type == Type.ASSIGN) return evalAssign(left, right, env);
+
+		return null;	
+	}
+
+	private static Lexeme evalPlus(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
+		l = eval(l, env);
+		r = eval(r, env);
+		if (l.type != Type.INTEGER || r.type != Type.INTEGER) {
+			throw new EvalException("Tried to perform operation "+Type.PLUS +
+				" on types " + l.type + " and " + r.type);
+		}
+		Integer a = (Integer) l.value(), b = (Integer) r.value();
+		return Lexeme.literal(Type.INTEGER, a + b, -1);
+	}
+	private static Lexeme evalMinus(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
+		l = eval(l, env);
+		r = eval(r, env);
+		if (l.type != Type.INTEGER || r.type != Type.INTEGER) {
+			throw new EvalException("Tried to perform operation "+Type.MINUS +
+				" on types " + l.type + " and " + r.type);
+		}
+		Integer a = (Integer) l.value(), b = (Integer) r.value();
+		return Lexeme.literal(Type.INTEGER, a - b, -1);
+	}
+	private static Lexeme evalTimes(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
+		l = eval(l, env);
+		r = eval(r, env);
+		if (l.type != Type.INTEGER || r.type != Type.INTEGER) {
+			throw new EvalException("Tried to perform operation "+Type.TIMES +
+				" on types " + l.type + " and " + r.type);
+		}
+		Integer a = (Integer) l.value(), b = (Integer) r.value();
+		return Lexeme.literal(Type.INTEGER, a * b, -1);
+	}
+	private static Lexeme evalDiv(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
+		l = eval(l, env);
+		r = eval(r, env);
+		if (l.type != Type.INTEGER || r.type != Type.INTEGER) {
+			throw new EvalException("Tried to perform operation "+Type.DIV +
+				" on types " + l.type + " and " + r.type);
+		}
+		Integer a = (Integer) l.value(), b = (Integer) r.value();
+		return Lexeme.literal(Type.INTEGER, a + b, -1);
+	}
+	private static Lexeme evalMod(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
+		l = eval(l, env);
+		r = eval(r, env);
+		if (l.type != Type.INTEGER || r.type != Type.INTEGER) {
+			throw new EvalException("Tried to perform operation "+Type.MOD +
+				" on types " + l.type + " and " + r.type);
+		}
+		Integer a = (Integer) l.value(), b = (Integer) r.value();
+		return Lexeme.literal(Type.INTEGER, a % b, -1);
+	}
+
+	private static Lexeme evalAssign(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
+		if (l.type != Type.IDENTIFIER) {
+			throw new EvalException("Tried to "+Type.ASSIGN + " to a "+l.type+" rather than an "+Type.IDENTIFIER);
+		}
+		r = eval(r, env);
+
+		Environment.set(env, l, r);	
+		return r;
+
+	}
+
 
 	/**
 	 * Evaluate a function call.
