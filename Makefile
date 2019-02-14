@@ -12,7 +12,7 @@ Minese.class: Minese.java Evaluator.class Environment.class Lexeme.class Parser.
 		EvalException.class
 	$(COMP) $(OPTS) Minese.java
 
-Evaluator.class: Evaluator.java Lexeme.class Environment.class EvalException.class
+Evaluator.class: Evaluator.java Lexeme.class Environment.class BuiltIns.class EvalException.class
 	$(COMP) $(OPTS) Evaluator.java
 
 BuiltIns.class: BuiltIns.java Lexeme.class

@@ -243,7 +243,7 @@ public class Parser {
 
 		if (check(Type.OPAREN)) {
 			advance();
-			Lexeme args = exprList();
+			Lexeme args = expressionPending() ? exprList() : null;
 			match(Type.CPAREN);
 			return Lexeme.cons(Type.funcCall, id, args);
 		}

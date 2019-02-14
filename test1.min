@@ -1,4 +1,4 @@
 define main() {
 	var x = 3;
-	print(x);
+	println(x, endl());
 }
