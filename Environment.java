@@ -78,6 +78,7 @@ public class Environment {
 			vals = vals.cdr();
 			firstLine = false;
 		}
+		if (sb.length() == 0) return "EMPTY";
 		return sb.toString();
 	}
 

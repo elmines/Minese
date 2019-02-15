@@ -2,17 +2,19 @@ public class TestEnv {
 
 	public static void main(String[] args) throws EnvException {
 
-		System.out.println("Creating a root environment with variables "+
-			"z = 6, y = 5, x = 4...");
+		System.out.println("Creating an empty root environment...");
 		Lexeme a = Environment.newEnvironment();
+		System.out.println("Displaying the empty environment...");
+		Environment.displayFull(a);
+		System.out.println("Inserting values in the following order: z = 6, y = 5, x = 4...");
 
-		Environment.insert(a, Lexeme.literal(Type.IDENTIFIER, "x", -1), Lexeme.literal(Type.INTEGER, 4, -1));
-		Environment.insert(a, Lexeme.literal(Type.IDENTIFIER, "y", -1), Lexeme.literal(Type.INTEGER, 5, -1));
 		Environment.insert(a, Lexeme.literal(Type.IDENTIFIER, "z", -1), Lexeme.literal(Type.INTEGER, 6, -1));
+		Environment.insert(a, Lexeme.literal(Type.IDENTIFIER, "y", -1), Lexeme.literal(Type.INTEGER, 5, -1));
+		Environment.insert(a, Lexeme.literal(Type.IDENTIFIER, "x", -1), Lexeme.literal(Type.INTEGER, 4, -1));
 
 
-		System.out.println("Extending the environment with variable x = \"Four\"...");
-		Lexeme b = Environment.newScope(a, idList("x"), valList("Four"));
+		System.out.println("Extending the environment with variables x = \"Four\", l = 49...");
+		Lexeme b = Environment.newScope(a, idList("x", "l"), valList("Four", 49));
 
 		System.out.println("Displaying the local environment...");
 		Environment.displayLocal(b);
