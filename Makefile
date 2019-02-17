@@ -9,13 +9,15 @@ run: Minese.class scriptText.txt
 	cp scriptText.txt run
 	chmod +x run
 
-test: run
-	./run test1.min
-
 conditionals: conditionals.min
 	cat conditionals.min
 conditionalsx: conditionals.min run
 	./run conditionals.min
+
+functions: functions.min
+	cat functions.min
+functionsx: functions.min run
+	./run functions.min
 
 Minese.class: Minese.java Evaluator.class Environment.class Lexeme.class Parser.class \
 		EvalException.class

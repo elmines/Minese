@@ -11,6 +11,7 @@ public final class BuiltIns {
 		put("len", BuiltIns::len);
 		put("set", BuiltIns::set);
 		put("get", BuiltIns::get);
+		put("append", BuiltIns::append);
 	}};
 
 	private static Lexeme print(Lexeme args) {
@@ -39,6 +40,17 @@ public final class BuiltIns {
 		return Lexeme.literal(Type.STRING, "\n", -1);
 	}
 
+	private static Lexeme append(Lexeme args) throws EvalException {
+		Lexeme sequence = args.car();
+		Lexeme element = args.cdr().car();
+
+		if (sequence.type == Type.array) {
+			ArrayList<Lexeme> array = (ArrayList<Lexeme>) sequence.value();
+			array.add(element);
+			return element;
+		}
+		throw new EvalException("Cannot append elements to type "+sequence.type);
+	}
 
 
 	private static Lexeme get(Lexeme args) throws EvalException {
