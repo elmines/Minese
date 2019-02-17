@@ -107,7 +107,7 @@ public class Parser {
 			match(Type.CCURLY);
 			return stmts;
 		}
-		return statements();
+		return statement();
 
 	}
 	private boolean blockPending() { return check(Type.OCURLY) || statementPending(); }

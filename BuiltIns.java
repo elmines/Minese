@@ -19,7 +19,8 @@ public final class BuiltIns {
 
 		while (args != null) {
 			Object val = args.car().value();
-			sb.append( val.toString() );
+			if (val == null) sb.append("null");
+			else             sb.append( val.toString() );
 			args = args.cdr();
 		}
 

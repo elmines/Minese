@@ -14,6 +14,9 @@ public enum Type {
 	INTEGER, STRING,
 	IF, ELSE, WHILE,
 	VAR, DEFINE, CLASS, EXTENDS, RETURN, LAMBDA,
+	NULL,
+
+
 	BOOLEAN,
 	IDENTIFIER,
 	EOF,
@@ -50,6 +53,8 @@ public enum Type {
 	CLOSURE,
 
 	IDNODE, VALNODE,
+
+	RETURNVAL,
 
 	GLUE
 }

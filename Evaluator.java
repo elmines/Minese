@@ -11,7 +11,9 @@ import java.util.ArrayList;
 public class Evaluator {
 
 	public static Lexeme eval(Lexeme tree, Lexeme env) throws EnvException, EvalException {
-		if (tree == null) return tree;
+		if (tree == null) return Lexeme.literal(Type.NULL, null, -1);
+
+		if (tree.type == Type.NULL) return tree;
 
 		if (tree.type == Type.INTEGER) return tree;
 		if (tree.type == Type.STRING) return tree;
@@ -23,13 +25,18 @@ public class Evaluator {
 		if (Group.BINARY.contains(tree.type)) return evalBinary(tree, env);
 		if (Group.UNARY.contains(tree.type)) return evalUnaryOp(tree, env);
 
+		if (tree.type == Type.RETURNVAL) return tree;
+		if (tree.type == Type.returnStatement) {
+			return Lexeme.cons(Type.RETURNVAL, null, eval(tree.cdr(), env));
+		}
 		if (tree.type == Type.condStatement) return evalCond(tree, env);
 		if (tree.type == Type.whileStatement) return evalWhile(tree, env);
 
 
 		if (tree.type == Type.statements) {
 			Lexeme stmt = tree.car();
-			eval(stmt, env);
+			stmt = eval(stmt, env);
+			if (stmt != null && stmt.type == Type.RETURNVAL) return stmt;
 			Lexeme following = tree.cdr();
 			return eval(following, env);
 		}
@@ -94,10 +101,11 @@ public class Evaluator {
 		Lexeme body = tree.cdr();
 		while ( (Boolean) condition.value() ) {
 			Lexeme evaluated = eval(body, env);
+			if (evaluated.type == Type.RETURNVAL) return evaluated;
 			condition = eval(symCondition, env);
 		}
 
-		return null;
+		return Lexeme.literal(Type.NULL, null, -1);
 
 	}
 
@@ -258,7 +266,11 @@ public class Evaluator {
 		Lexeme localEnv = Environment.newScope(staticEnv, formalParams, args);
 		Lexeme body = getBody(closure);
 
-		return eval(body, localEnv);
+		Lexeme result = eval(body, localEnv);
+		if (result.type == Type.RETURNVAL) return result.cdr();
+		else if (result.type == Type.NULL)       return result;
+
+		throw new EvalException("Invalid return Lexeme "+result.type);
 
 	}
 
