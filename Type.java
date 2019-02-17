@@ -50,5 +50,7 @@ public enum Type {
 	CLOSURE,
 
 	IDNODE, VALNODE,
+
+	GLUE
 }
 

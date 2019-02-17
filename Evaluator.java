@@ -19,6 +19,8 @@ public class Evaluator {
 
 		if (Group.BINARY.contains(tree.type)) return evalBinary(tree, env);
 
+		if (tree.type == Type.condStatement) return evalCond(tree, env);
+
 
 		if (tree.type == Type.statements) {
 			Lexeme stmt = tree.car();
@@ -47,6 +49,21 @@ public class Evaluator {
 
 	}
 
+	private static Lexeme evalCond(Lexeme tree, Lexeme env) throws EnvException, EvalException {
+		Lexeme condition = eval(tree.car().car(), env);
+
+		if (condition.type != Type.BOOLEAN)
+			throw new EnvException("Tried to interpret " + condition.type + " as a "+Type.BOOLEAN);
+
+		if ( (Boolean) condition.value() ) {
+			Lexeme body = tree.car().cdr();
+			return eval(body, env);
+		}
+
+		Lexeme alt = tree.cdr();
+		return eval(alt, env);	
+	}
+
 	private static Lexeme evalBinary(Lexeme tree, Lexeme env) throws EnvException, EvalException {
 		Lexeme op = tree;
 		Lexeme left  = op.car();
@@ -58,10 +75,55 @@ public class Evaluator {
 		if (op.type == Type.DIV) return evalDiv(left, right, env);
 		if (op.type == Type.MOD) return evalMod(left, right, env);
 
+		if (op.type == Type.EQ)  return evalEq(left, right, env);
+		if (op.type == Type.NEQ) return evalNeq(left, right, env);
+
+		if (op.type == Type.LT)  return evalNumCmp(left, right, env, "<");
+		if (op.type == Type.LTE) return evalNumCmp(left, right, env, "<=");
+		if (op.type == Type.GTE) return evalNumCmp(left, right, env, ">=");
+		if (op.type == Type.GT)  return evalNumCmp(left, right, env, ">");
+
 		if (op.type == Type.ASSIGN) return evalAssign(left, right, env);
 
-		return null;	
+		throw new EvalException("Invalid binary operator "+op.type);
+
 	}
+
+	private static Lexeme evalEq(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
+		return Lexeme.literal(Type.BOOLEAN, rawEq(l, r, env), -1);
+	}
+	private static Lexeme evalNeq(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
+		return Lexeme.literal(Type.BOOLEAN, ! rawEq(l, r, env), -1);
+	}
+
+	private static boolean rawEq(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
+		l = eval(l, env);
+		r = eval(r, env);
+		return l.value().equals(r.value());
+	}
+
+
+	private static Lexeme evalNumCmp(Lexeme l, Lexeme r, Lexeme env, String op) throws EnvException, EvalException {
+		l = eval(l, env);
+		r = eval(r, env);
+		if (l.type != Type.INTEGER || r.type != Type.INTEGER) {
+			throw new EvalException("Tried to perform operation "+ op +
+				" on types " + l.type + " and " + r.type);
+		}
+
+		Integer lVal = (Integer) l.value(), rVal = (Integer) r.value();
+		Boolean result = false;
+
+		if      (op.equals("<") ) result = lVal < rVal;
+		else if (op.equals("<=")) result = lVal <= rVal;
+		else if (op.equals(">") ) result = lVal > rVal;
+		else if (op.equals(">=")) result = lVal >= rVal;
+		else throw new EvalException("Invalid operator "+op);
+
+		return Lexeme.literal(Type.BOOLEAN, result, -1);
+
+	}
+
 
 	private static Lexeme evalPlus(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
 		l = eval(l, env);

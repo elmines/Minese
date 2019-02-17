@@ -149,12 +149,14 @@ public class Parser {
 		match(Type.CPAREN);
 		Lexeme body = block();
 
+		Lexeme ifStatement = Lexeme.cons(Type.GLUE, condition, body);
+
 		Lexeme alt = null;
 		if (check(Type.ELSE)) {
 			advance();
 			alt = block();
 		}
-		return Lexeme.cons(Type.condStatement, body, alt);
+		return Lexeme.cons(Type.condStatement, ifStatement, alt);
 	}
 	private boolean condStatementPending() { return check(Type.IF); }
 	private Lexeme whileStatement() throws LexException, SyntaxException {
