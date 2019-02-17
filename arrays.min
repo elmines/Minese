@@ -1,9 +1,19 @@
 define main() {
+	define double(var a)
+		{
+		return a * 2;
+		}
 
-	var x = [2, 3, 5, 7, 11];
-	println( len(x) );
-	println( get(x, 4) );
-	println( set(x, 1, "Ethan") );
-	println( x );
+	var values = [2, "Ethan", 5, double, 11];
+	println("values         = ", values);
+	println("len(values)    = ", len(values));
+	println("get(values, 4) = ", get(values, 4));
+
+	println("Setting index 1 to Jerry...");
+	set(values, 1, "Jerry");
+	println("values         = ", values);
+	println("Appending 42...");
+	append(values, 42);
+	println("values         = ", values);
 
 }

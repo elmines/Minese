@@ -9,6 +9,10 @@ run: Minese.class scriptText.txt
 	cp scriptText.txt run
 	chmod +x run
 
+arrays: arrays.min
+	cat arrays.min
+arraysx: arrays.min run
+	./run arrays.min
 
 conditionals: conditionals.min
 	cat conditionals.min
