@@ -101,7 +101,7 @@ public class Evaluator {
 				" on types " + l.type + " and " + r.type);
 		}
 		Integer a = (Integer) l.value(), b = (Integer) r.value();
-		return Lexeme.literal(Type.INTEGER, a + b, -1);
+		return Lexeme.literal(Type.INTEGER, a / b, -1);
 	}
 	private static Lexeme evalMod(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
 		l = eval(l, env);
