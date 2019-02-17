@@ -60,15 +60,13 @@ returnStatement : RETURN expression SEMICOLON
                 | RETURN SEMICOLON
 
 
+expression : expression1 ASSIGN expression
+	   | expression1
 
-expression : unary optOperation
-	   | unary operator expression 
+expression1: unary binaryOp expression1
+	   | unary
 
-
-optOperation: NONE
-	    | operator expression
-
-operator : PLUS
+binaryOp : PLUS
          | TIMES
          | MINUS
          | DIV
@@ -79,18 +77,9 @@ operator : PLUS
          | EQ
          | GTE
          | GT
-         | ASSIGN
          | DOT
          | AND
          | OR
-
-
-optExprList : NONE
-            | exprList
-
-exprList : expression
-         | expression COMMA exprList
-
 
 unary: UMINUS unary
      | NOT    unary
@@ -102,6 +91,15 @@ unary: UMINUS unary
      | boolean
      | INTEGER
      | STRING
+
+
+optExprList : NONE
+            | exprList
+
+exprList : expression
+         | expression COMMA exprList
+
+
 
 
 idOperation: IDENTIFIER

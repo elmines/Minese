@@ -181,15 +181,27 @@ public class Parser {
 
 	//Expressions
 	private Lexeme expression() throws LexException, SyntaxException {
+		Lexeme expr = expression1();
+		if ( check(Type.ASSIGN) ) {
+			Lexeme assign = match(Type.ASSIGN);
+			assign.setLeft(expr);
+			assign.setRight(expression());
+			expr = assign;
+		}
+		return expr;
+	}
+	private Lexeme expression1() throws LexException, SyntaxException {
 		Lexeme u = unary();
-		if (operatorPending()) {
-			Lexeme op = operator();
+		while (operatorPending()) {
+			Lexeme op = advance();
 			op.setLeft(u);
-			op.setRight(expression());
-			return op;
+			op.setRight(unary());
+			u = op;
 		}
 		return u;
 	}
+
+
 	private Lexeme exprList() throws LexException, SyntaxException {
 		Lexeme expr = expression();
 		Lexeme remaining = null;
@@ -200,8 +212,8 @@ public class Parser {
 		return Lexeme.cons(Type.exprList, expr, remaining);
 	}
 	private boolean expressionPending() { return unaryPending(); }
-	private Lexeme operator() throws LexException, SyntaxException { return match(Group.BINARY); }
-	private boolean operatorPending() { return check(Group.BINARY); }
+	private Lexeme operator() throws LexException, SyntaxException { return match(Group.BINARY_1); }
+	private boolean operatorPending() { return check(Group.BINARY_1); }
 
 	//Unaries
 	private Lexeme unary() throws LexException, SyntaxException {

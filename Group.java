@@ -19,6 +19,11 @@ public final class Group {
 		Type.LT, Type.LTE, Type.NEQ, Type.EQ, Type.GTE, Type.GT,
 		Type.ASSIGN, Type.DOT, Type.AND, Type.OR);
 
+	public static final Group BINARY_1 = new Group("binary operator", 
+		Type.PLUS, Type.MINUS, Type.TIMES, Type.DIV, Type.MOD,
+		Type.LT, Type.LTE, Type.NEQ, Type.EQ, Type.GTE, Type.GT,
+		/*Type.ASSIGN,*/ Type.DOT, Type.AND, Type.OR);
+
 	public boolean contains(Type t) { return terminals.contains(t); }
 
 
