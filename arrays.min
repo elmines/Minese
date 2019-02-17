@@ -1,0 +1,9 @@
+define main() {
+
+	var x = [2, 3, 5, 7, 11];
+	println( len(x) );
+	println( get(x, 4) );
+	println( set(x, 1, "Ethan") );
+	println( x );
+
+}

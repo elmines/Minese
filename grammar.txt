@@ -106,7 +106,6 @@ unary: UMINUS unary
 
 idOperation: IDENTIFIER
            | IDENTIFIER OPAREN optExprList CPAREN
-           | IDENTIFIER OBRACK expression CBRACK
 
 
 array : OBRACK exprList CBRACK

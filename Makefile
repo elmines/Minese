@@ -16,7 +16,7 @@ Evaluator.class: Evaluator.java Lexeme.class Group.class Environment.class \
 		BuiltIns.class EvalException.class
 	$(COMP) $(OPTS) Evaluator.java
 
-BuiltIns.class: BuiltIns.java Lexeme.class
+BuiltIns.class: BuiltIns.java Lexeme.class BuiltIn.class 
 	$(COMP) $(OPTS) BuiltIns.java
 BuiltIn.class: BuiltIn.java Lexeme.class
 	$(COMP) $(OPTS) BuiltIn.java
