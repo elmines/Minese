@@ -1,18 +1,28 @@
+define description(var x)
+	{
+		print("x = ", x, ": ");
+
+		if ( (x % 3 == 0) & (x % 2 == 0) ) 
+			println("x is divisible by 6!");
+		else if ( x % 3 == 0)
+			println("x is divisible by 3!");
+		else if ( x % 2 == 0)
+			{
+			println("x is even!");
+			}
+		else if ( (x == 1) | (x == -1) )
+			println("|x| = 1 ");
+		else
+			println("I don't notice anything that special about x.");
+
+	}
 define main() {
 
-	var x = 32;
-
-	if ( x < 10 ) {
-		println("x is less than 10");
-	}
-	else if (x == 10) {
-		println("x equals 10");
-	}
-	else if (x > 50) {
-		println("x is greater than 50");
-	}
-	else {
-		println("x is greater than 10 but less than or equal to 50");
-	}
-
+	description(6);
+	description(15);
+	description(4);
+	description(1);
+	description(-1);
+	description(17);
+	
 }

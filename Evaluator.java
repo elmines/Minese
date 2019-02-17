@@ -145,23 +145,46 @@ public class Evaluator {
 
 		if (op.type == Type.ASSIGN) return evalAssign(left, right, env);
 
+		if (op.type == Type.AND) return evalAnd(left, right, env);
+		if (op.type == Type.OR)  return evalOr(left, right, env);
+
 		throw new EvalException("Invalid binary operator "+op.type);
 
 	}
 
-	private static Lexeme evalEq(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
-		return Lexeme.literal(Type.BOOLEAN, rawEq(l, r, env), -1);
-	}
-	private static Lexeme evalNeq(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
-		return Lexeme.literal(Type.BOOLEAN, ! rawEq(l, r, env), -1);
-	}
-
-	private static boolean rawEq(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
+	private static Lexeme evalAnd(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
 		l = eval(l, env);
 		r = eval(r, env);
-		return l.value().equals(r.value());
+		if (l.type != Type.BOOLEAN || r.type != Type.BOOLEAN) {
+			throw new EvalException("Tried to perform operation "+ Type.AND +
+				" on types " + l.type + " and " + r.type);
+		}
+		boolean result = ((Boolean) l.value()) && ((Boolean) r.value());
+		return Lexeme.literal(Type.BOOLEAN, result, -1);
+	}
+	private static Lexeme evalOr(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
+		l = eval(l, env);
+		r = eval(r, env);
+		if (l.type != Type.BOOLEAN || r.type != Type.BOOLEAN) {
+			throw new EvalException("Tried to perform operation "+ Type.OR +
+				" on types " + l.type + " and " + r.type);
+		}
+		boolean result = ((Boolean) l.value()) || ((Boolean) r.value());
+		return Lexeme.literal(Type.BOOLEAN, result, -1);
 	}
 
+	private static Lexeme evalEq(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
+		l = eval(l, env);
+		r = eval(r, env);	
+		boolean result = l.value().equals(r.value());
+		return Lexeme.literal(Type.BOOLEAN, result, -1);
+	}
+	private static Lexeme evalNeq(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
+		l = eval(l, env);
+		r = eval(r, env);	
+		boolean result = ! l.value().equals(r.value());
+		return Lexeme.literal(Type.BOOLEAN, result, -1);
+	}
 
 	private static Lexeme evalNumCmp(Lexeme l, Lexeme r, Lexeme env, String op) throws EnvException, EvalException {
 		l = eval(l, env);

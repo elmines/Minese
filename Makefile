@@ -5,8 +5,17 @@ JVM=java
 COMP=javac
 OPTS=-Xlint -g
 
-test: Minese.class
-	$(JVM) Minese test1.min
+minese: Minese.class scriptText.txt
+	cp scriptText.txt minese
+	chmod +x minese
+
+test: minese
+	./minese test1.min
+
+conditionals: conditionals.min
+	cat conditionals.min
+conditionalsx: conditionals.min minese
+	./minese conditionals.min
 
 Minese.class: Minese.java Evaluator.class Environment.class Lexeme.class Parser.class \
 		EvalException.class
@@ -53,4 +62,4 @@ EvalException.class: EvalException.java
 	$(COMP) $(OPTS) EvalException.java
 
 clean:
-	rm *.class
+	rm *.class minese
