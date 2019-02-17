@@ -14,6 +14,11 @@ conditionals: conditionals.min
 conditionalsx: conditionals.min run
 	./run conditionals.min
 
+recursion: recursion.min
+	cat recursion.min
+recursionx: recursion.min run
+	./run recursion.min
+
 functions: functions.min
 	cat functions.min
 functionsx: functions.min run
