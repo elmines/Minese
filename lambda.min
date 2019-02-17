@@ -1,0 +1,32 @@
+define reduce(var nums, var accum, var op)
+	{
+
+	var length = len(nums);
+	var i = 0;
+	while (i < length)
+		{
+		accum = op(accum, get(nums, i));
+		i = i + 1;
+		}
+	return accum;
+	}
+
+define hashFunc(var prime)
+	{
+
+	return lambda(var x) { return x * prime; } ;
+
+	}
+
+define main()
+	{
+		var primes = [2, 3, 5, 7, 11];
+		var sum = reduce(primes, 0, lambda(var accum, var x) return accum + x; );
+		println("Sum of ", primes, " = ", sum);
+
+		var factor = get(primes, 2);
+		println("Creating function hash() that just multiplies by the prime ", factor);
+		var hash = hashFunc(factor);
+		println("hash(20) = ", hash(20));
+
+	}

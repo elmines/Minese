@@ -19,6 +19,7 @@ public class Evaluator {
 		if (tree.type == Type.STRING) return tree;
 		if (tree.type == Type.BOOLEAN) return tree;
 		if (tree.type == Type.array) return evalArray(tree, env);
+		if (tree.type == Type.anonFunction) return evalLambda(tree, env);
 
 		if (tree.type == Type.IDENTIFIER) return Environment.get(env, tree);
 
@@ -268,6 +269,14 @@ public class Evaluator {
 		Environment.set(env, l, r);	
 		return r;
 
+	}
+
+	public static Lexeme evalLambda(Lexeme tree, Lexeme env) throws EnvException, EvalException {
+		Lexeme funcBody = tree.cdr();
+		Lexeme id = Lexeme.literal(Type.IDENTIFIER, "lambda", -1);
+		Lexeme funcDef = Lexeme.cons(Type.funcDef, id, funcBody);
+		Lexeme closure = Lexeme.cons(Type.CLOSURE, funcDef, env);
+		return closure;
 	}
 
 

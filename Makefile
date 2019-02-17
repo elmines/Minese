@@ -19,6 +19,11 @@ functions: functions.min
 functionsx: functions.min run
 	./run functions.min
 
+lambda: lambda.min
+	cat lambda.min
+lambdax: lambda.min run
+	./run lambda.min
+
 Minese.class: Minese.java Evaluator.class Environment.class Lexeme.class Parser.class \
 		EvalException.class
 	$(COMP) $(OPTS) Minese.java
