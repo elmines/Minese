@@ -9,6 +9,7 @@ run: Minese.class scriptText.txt
 	cp scriptText.txt run
 	chmod +x run
 
+
 conditionals: conditionals.min
 	cat conditionals.min
 conditionalsx: conditionals.min run
@@ -18,6 +19,11 @@ recursion: recursion.min
 	cat recursion.min
 recursionx: recursion.min run
 	./run recursion.min
+
+iteration: iteration.min
+	cat iteration.min
+iterationx: iteration.min run
+	./run iteration.min
 
 functions: functions.min
 	cat functions.min
