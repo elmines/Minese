@@ -20,6 +20,7 @@ public class Evaluator {
 		if (Group.BINARY.contains(tree.type)) return evalBinary(tree, env);
 
 		if (tree.type == Type.condStatement) return evalCond(tree, env);
+		if (tree.type == Type.whileStatement) return evalWhile(tree, env);
 
 
 		if (tree.type == Type.statements) {
@@ -46,6 +47,22 @@ public class Evaluator {
 		if (tree.type == Type.program) return eval(tree.cdr(), env);
 
 		throw new EvalException( String.format("Invalid evaluation item %s", tree) );
+
+	}
+	private static Lexeme evalWhile(Lexeme tree, Lexeme env) throws EnvException, EvalException {
+		Lexeme symCondition = tree.car();
+
+		Lexeme condition = eval(symCondition, env);
+		if (condition.type != Type.BOOLEAN)
+			throw new EnvException("Tried to interpret " + condition.type + " as a "+Type.BOOLEAN);
+
+		Lexeme body = tree.cdr();
+		while ( (Boolean) condition.value() ) {
+			Lexeme evaluated = eval(body, env);
+			condition = eval(symCondition, env);
+		}
+
+		return null;
 
 	}
 
