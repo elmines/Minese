@@ -18,6 +18,7 @@ public class Evaluator {
 		if (tree.type == Type.IDENTIFIER) return Environment.get(env, tree);
 
 		if (Group.BINARY.contains(tree.type)) return evalBinary(tree, env);
+		if (Group.UNARY.contains(tree.type)) return evalUnaryOp(tree, env);
 
 		if (tree.type == Type.condStatement) return evalCond(tree, env);
 		if (tree.type == Type.whileStatement) return evalWhile(tree, env);
@@ -49,6 +50,26 @@ public class Evaluator {
 		throw new EvalException( String.format("Invalid evaluation item %s", tree) );
 
 	}
+
+	private static Lexeme evalUnaryOp(Lexeme tree, Lexeme env) throws EnvException, EvalException {
+		Lexeme operand = eval(tree.car(), env);
+
+		if (tree.type == Type.UMINUS) {
+			if (operand.type != Type.INTEGER)
+				throw new EvalException("Tried to apply "+Type.UMINUS + " to "+operand.type);
+			return Lexeme.literal(Type.INTEGER, - (Integer) operand.value(), -1);
+		}
+
+		if (tree.type == Type.NOT) {
+			if (operand.type != Type.BOOLEAN)
+				throw new EvalException("Tried to apply "+Type.NOT + " to "+operand.type);
+			return Lexeme.literal(Type.BOOLEAN, ! (Boolean) operand.value(), -1);
+		}
+
+
+		throw new EvalException("Invalid unary operation "+tree.type);
+	}
+
 	private static Lexeme evalWhile(Lexeme tree, Lexeme env) throws EnvException, EvalException {
 		Lexeme symCondition = tree.car();
 

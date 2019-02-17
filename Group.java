@@ -9,13 +9,10 @@ import java.util.Arrays;
 
 public final class Group {
 
-	/*
-	public static final Set<Lexeme> BINARY_OPS = new HashSet<>(Arrays.asList(
-		Type.PLUS, Type.MINUS, Type.TIMES, Type.DIV, Type.MOD,
-		Type.LT, Type.LTE, Type.NEQ, Type.EQ, Type.GTE, Type.GT,
-		Type.ASSIGN, Type.DOT, Type.AND, Type.OR
-	));
-	*/
+
+	public static final Group UNARY = new Group("unary operator",
+		Type.UMINUS, Type.NOT
+	);
 
 	public static final Group BINARY = new Group("binary operator", 
 		Type.PLUS, Type.MINUS, Type.TIMES, Type.DIV, Type.MOD,

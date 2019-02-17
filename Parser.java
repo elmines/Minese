@@ -206,12 +206,12 @@ public class Parser {
 	//Unaries
 	private Lexeme unary() throws LexException, SyntaxException {
 		if (check(Type.MINUS)) {
-			Lexeme uMinus = Lexeme.toUminus(advance());
-			return Lexeme.cons(Type.unary, uMinus, unary());
+			advance();
+			return Lexeme.cons(Type.UMINUS, unary(), null);
 		}
 		if (check(Type.NOT)) {
-			Lexeme not = advance();
-			return Lexeme.cons(Type.unary, not, unary());
+			advance();
+			return Lexeme.cons(Type.NOT, unary(), null);
 		}
 		if (check(Type.OPAREN)) {
 			advance();
