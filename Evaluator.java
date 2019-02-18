@@ -47,8 +47,9 @@ public class Evaluator {
 		}
 
 
-		if (tree.type == Type.funcDef) return evalFuncDef(tree, env);
-		if (tree.type == Type.varDef) return evalVarDef(tree, env);
+		if (tree.type == Type.classDef) return evalClassDef(tree, env);
+		if (tree.type == Type.funcDef)  return evalFuncDef(tree, env);
+		if (tree.type == Type.varDef)   return evalVarDef(tree, env);
 
 
 		if (tree.type == Type.defs) {
@@ -59,6 +60,22 @@ public class Evaluator {
 		if (tree.type == Type.program) return eval(tree.cdr(), env);
 
 		throw new EvalException( String.format("Invalid evaluation item %s", tree) );
+
+	}
+
+	private static Lexeme evalClassDef(Lexeme tree, Lexeme env) throws EnvException, EvalException {
+		Lexeme className = tree.car();
+		Lexeme classBody = tree.cdr();
+
+		Lexeme classEnv = Environment.newScope(env, null, null);
+		eval(classBody, classEnv);
+		Environment.insert(classEnv, Lexeme.literal(Type.IDENTIFIER, "this", -1), classEnv);
+
+		Lexeme constructor = Environment.get(classEnv, Lexeme.literal(Type.IDENTIFIER, "constructor", -1));
+		Environment.insert(env, className, constructor);
+
+		
+		return null;
 
 	}
 
@@ -130,6 +147,8 @@ public class Evaluator {
 		Lexeme left  = op.car();
 		Lexeme right = op.cdr();
 
+		if (op.type == Type.DOT) return evalDot(left, right, env);
+
 		if (op.type == Type.PLUS) return evalPlus(left, right, env);
 		if (op.type == Type.MINUS) return evalMinus(left, right, env);
 		if (op.type == Type.TIMES) return evalTimes(left, right, env);
@@ -151,6 +170,14 @@ public class Evaluator {
 
 		throw new EvalException("Invalid binary operator "+op.type);
 
+	}
+
+	private static Lexeme evalDot(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
+		Lexeme obj = eval(l, env);
+		if (obj.type != Type.environment) {
+			throw new EvalException("Tried to access a member from type "+obj.type);
+		}
+		return Environment.get(obj, r);
 	}
 
 	private static Lexeme evalAnd(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
@@ -260,18 +287,26 @@ public class Evaluator {
 		return Lexeme.literal(Type.INTEGER, a % b, -1);
 	}
 
+
 	private static Lexeme evalAssign(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
+		Lexeme result = eval(r, env);
+		if (l.type == Type.DOT) {
+			Lexeme obj = eval(l.car(), env);
+			Lexeme field = l.cdr();
+			Environment.set(obj, field, result);
+			return result;
+		}
+
 		if (l.type != Type.IDENTIFIER) {
 			throw new EvalException("Tried to "+Type.ASSIGN + " to a "+l.type+" rather than an "+Type.IDENTIFIER);
 		}
-		r = eval(r, env);
 
-		Environment.set(env, l, r);	
-		return r;
+		Environment.set(env, l, result);	
+		return result;
 
 	}
 
-	public static Lexeme evalLambda(Lexeme tree, Lexeme env) throws EnvException, EvalException {
+	private static Lexeme evalLambda(Lexeme tree, Lexeme env) throws EnvException, EvalException {
 		Lexeme funcBody = tree.cdr();
 		Lexeme id = Lexeme.literal(Type.IDENTIFIER, "lambda", -1);
 		Lexeme funcDef = Lexeme.cons(Type.funcDef, id, funcBody);
@@ -296,6 +331,7 @@ public class Evaluator {
 		Lexeme formalParams = getParams(closure);
 
 		Lexeme localEnv = Environment.newScope(staticEnv, formalParams, args);
+		//Environment.insert(localEnv, Lexeme.literal(Type.IDENTIFIER, "this", -1), localEnv);
 		Lexeme body = getBody(closure);
 
 		Lexeme result = eval(body, localEnv);

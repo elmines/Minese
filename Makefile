@@ -39,6 +39,11 @@ lambda: lambda.min
 lambdax: lambda.min run
 	./run lambda.min
 
+grad: grad.min
+	cat grad.min
+gradx: grad.min run
+	./run grad.min
+
 Minese.class: Minese.java Evaluator.class Environment.class Lexeme.class Parser.class \
 		EvalException.class
 	$(COMP) $(OPTS) Minese.java

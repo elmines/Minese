@@ -1,0 +1,37 @@
+define main() {
+	var decagon = Polygon(10);
+	println(decagon.numSides);
+	println(decagon.sideLength);
+
+	//var z = decagon.meta;
+
+	//println(decagon.meta.keyword);
+
+	//decagon.meta.keyword = "lame";
+	//println(decagon.meta.keyword);
+
+	
+}
+class Metadata {
+	var keyword = "cool";
+	define constructor() {
+		return this;
+	}
+}
+
+
+class Polygon {
+
+	var sideLength = -1;
+	var numSides = -1;
+	var meta = Metadata();
+
+	define constructor(var sideLength) {
+		return this;
+	}
+
+	//define perimeter() { return this.numSides * this.sideLength; }
+
+}
+
+

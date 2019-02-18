@@ -72,7 +72,7 @@ public class Environment {
 			Object val = vals.car().value();
 
 			if (!firstLine) sb.append("\n");
-			sb.append( String.format("%s: %s", id, val.toString()) );
+			sb.append( String.format("%s: %s", id, ids.car().toString()) );
 
 			ids = ids.cdr();
 			vals = vals.cdr();
