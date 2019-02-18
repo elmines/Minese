@@ -1,14 +1,10 @@
 define main() {
-	var decagon = Polygon(10);
-	println(decagon.numSides);
+	var decagon = Polygon(10, 5);
 	println(decagon.sideLength);
+	println(decagon.numSides);
 
-	//var z = decagon.meta;
-
-	//println(decagon.meta.keyword);
-
-	//decagon.meta.keyword = "lame";
-	//println(decagon.meta.keyword);
+	var perimeter = decagon.perimeter;
+	println( perimeter() );
 
 	
 }
@@ -26,11 +22,13 @@ class Polygon {
 	var numSides = -1;
 	var meta = Metadata();
 
-	define constructor(var sideLength) {
+	define constructor(var numSides, var sideLength) {
+		this.sideLength = sideLength;
+		this.numSides = numSides;
 		return this;
 	}
 
-	//define perimeter() { return this.numSides * this.sideLength; }
+	define perimeter() { return (this.numSides) * (this.sideLength); }
 
 }
 
