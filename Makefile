@@ -9,6 +9,11 @@ run: Minese.class scriptText.txt
 	cp scriptText.txt run
 	chmod +x run
 
+problem: iAVL
+	cat iAVL
+problemx: iAVL run testCase
+	./run iAVL testCase
+
 arrays: arrays.min
 	cat arrays.min
 arraysx: arrays.min run

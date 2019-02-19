@@ -56,6 +56,8 @@ public enum Type {
 
 	RETURNVAL,
 
-	GLUE
+	GLUE,
+
+	FILE
 }
 

@@ -1,0 +1,10 @@
+
+define main(var filePath) {
+	var fp = open(filePath);
+	var value;
+	while (hasNext(fp)) {
+		value = atoi( next(fp) );
+		println(value, " ", value + 5);
+	}
+
+}

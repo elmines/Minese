@@ -1,3 +1,4 @@
+import java.util.Scanner;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -5,6 +6,10 @@ import java.util.ArrayList;
 public final class BuiltIns {
 
 	public static final Map<String, BuiltIn> funcMap = new HashMap<String, BuiltIn>(){{
+		put("atoi", BuiltIns::atoi);
+		put("open", BuiltIns::open);
+		put("hasNext", BuiltIns::hasNext);
+		put("next", BuiltIns::next);
 		put("print", BuiltIns::print);
 		put("println", BuiltIns::println);
 		put("endl", BuiltIns::endl);
@@ -13,6 +18,37 @@ public final class BuiltIns {
 		put("get", BuiltIns::get);
 		put("append", BuiltIns::append);
 	}};
+
+	private static Lexeme atoi(Lexeme args) {
+		String token = (String) args.car().value();
+		return Lexeme.literal(Type.INTEGER, Integer.parseInt(token), -1);
+
+	}
+	private static Lexeme hasNext(Lexeme args) throws EvalException {
+		Scanner in = (Scanner) args.car().value();
+		return Lexeme.literal(Type.BOOLEAN, in.hasNext(), -1);
+	}
+
+	private static Lexeme next(Lexeme args) throws EvalException {
+		Scanner in = (Scanner) args.car().value();
+		return Lexeme.literal(Type.STRING, in.next(), -1);
+	}
+
+	private static Lexeme open(Lexeme args) throws EvalException {
+		String path = (String) args.car().value();
+
+		Scanner in;
+
+		try{
+			in  = new Scanner(new java.io.File(path));
+		} catch (java.io.FileNotFoundException e) {
+			throw new EvalException("File "+path+" not found.");
+		}
+
+		Lexeme fp = Lexeme.literal(Type.FILE, in, -1);
+		return fp;
+							
+	}
 
 	private static Lexeme print(Lexeme args) {
 
