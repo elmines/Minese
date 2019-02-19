@@ -134,6 +134,7 @@ public class Lexer {
 			case "lambda": return Lexeme.symbol(Type.LAMBDA, this.lineNumber);
 			case "true": return Lexeme.literal(Type.BOOLEAN, true, this.lineNumber);
 			case "false": return Lexeme.literal(Type.BOOLEAN, false, this.lineNumber);
+			case "null": return Lexeme.literal(Type.NULL, null, this.lineNumber);
 
 			default: return Lexeme.literal(Type.IDENTIFIER, word, this.lineNumber);
 		}

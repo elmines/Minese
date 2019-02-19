@@ -28,7 +28,7 @@ class Polygon {
 		return this;
 	}
 
-	define perimeter() { return (this.numSides) * (this.sideLength); }
+	define perimeter() { return this.numSides * this.sideLength; }
 
 }
 

@@ -190,14 +190,24 @@ public class Parser {
 		return expr;
 	}
 	private Lexeme expression1() throws LexException, SyntaxException {
-		Lexeme u = unary();
+		Lexeme u = expression2();
 		while (operatorPending()) {
 			Lexeme op = advance();
 			op.setLeft(u);
-			op.setRight(unary());
+			op.setRight(expression1());
 			u = op;
 		}
 		return u;
+	}
+	private Lexeme expression2() throws LexException, SyntaxException {
+		Lexeme expr = unary();
+		if ( check(Type.DOT) ) {
+			Lexeme assign = match(Type.DOT);
+			assign.setLeft(expr);
+			assign.setRight(expression2());
+			expr = assign;
+		}
+		return expr;
 	}
 
 
@@ -236,6 +246,7 @@ public class Parser {
 		if (check(Type.BOOLEAN))    return advance();
 		if (check(Type.INTEGER))    return advance();
 		if (check(Type.STRING))     return advance();
+		if (check(Type.NULL))       return advance();
 		
 
 		throw new SyntaxException(String.format(syntaxFmt, this.curr.lineNumber, "unary", this.curr.type));
@@ -250,7 +261,8 @@ public class Parser {
 			anonFunctionPending()   ||
 			check(Type.BOOLEAN)     ||
 			check(Type.INTEGER)     ||
-			check(Type.STRING);
+			check(Type.STRING)      ||
+			check(Type.NULL);
 	}
 	private Lexeme idOperation() throws LexException, SyntaxException {
 		Lexeme id = match(Type.IDENTIFIER);

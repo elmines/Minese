@@ -204,7 +204,14 @@ public class Evaluator {
 	private static Lexeme evalEq(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
 		l = eval(l, env);
 		r = eval(r, env);	
-		boolean result = l.value().equals(r.value());
+		Object lVal = l.value(), rVal = r.value();
+		boolean result;
+		if (lVal == null) {
+			if (rVal == null) result = true;
+			else              result = false;
+		}
+		else result = lVal.equals(rVal);
+		
 		return Lexeme.literal(Type.BOOLEAN, result, -1);
 	}
 	private static Lexeme evalNeq(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {

@@ -49,6 +49,10 @@ args: args.min
 	cat args.min
 argsx: args.min run
 	./run args.min hi yo
+nulls: nulls.min
+	cat nulls.min
+nullsx: nulls.min run
+	./run nulls.min hi yo
 
 Minese.class: Minese.java Evaluator.class Environment.class Lexeme.class Parser.class \
 		EvalException.class
