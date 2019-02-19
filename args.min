@@ -1,0 +1,5 @@
+
+define main(var a, var b) {
+	println(a);
+	println(b);
+}

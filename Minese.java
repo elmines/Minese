@@ -15,7 +15,8 @@ public class Minese {
 		}
 		final String path = args[0];
 
-		Lexeme mainFuncCall = Lexeme.cons(Type.funcCall, Lexeme.literal(Type.IDENTIFIER, "main", -1), null);
+		Lexeme funcArgs = argsList(args);
+		Lexeme mainFuncCall = Lexeme.cons(Type.funcCall, Lexeme.literal(Type.IDENTIFIER, "main", -1), funcArgs);
 
 
 		Lexeme programTree;
@@ -31,6 +32,24 @@ public class Minese {
 			e.printStackTrace(System.out);
 		}
 
+	}
+
+	public static Lexeme argsList(String[] args) {
+		//First arg-source file
+		if (args.length < 2) return null;
+
+		Lexeme root = Lexeme.cons(Type.exprList,
+			Lexeme.literal(Type.STRING, args[1], -1),
+			null);
+		Lexeme parent = root;
+		for (int i = 2; i < args.length; ++i) {
+			Lexeme arg = Lexeme.cons(Type.exprList,
+					Lexeme.literal(Type.STRING, args[i], -1),
+					null);
+			parent.setRight(arg);
+			parent = arg;
+		}
+		return root;
 	}
 
 }

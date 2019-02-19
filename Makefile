@@ -44,6 +44,12 @@ grad: grad.min
 gradx: grad.min run
 	./run grad.min
 
+#My extra tests
+args: args.min
+	cat args.min
+argsx: args.min run
+	./run args.min hi yo
+
 Minese.class: Minese.java Evaluator.class Environment.class Lexeme.class Parser.class \
 		EvalException.class
 	$(COMP) $(OPTS) Minese.java
