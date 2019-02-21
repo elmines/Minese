@@ -65,18 +65,41 @@ public class Evaluator {
 
 	private static Lexeme evalClassDef(Lexeme tree, Lexeme env) throws EnvException, EvalException {
 		Lexeme className = tree.car();
-		Lexeme classBody = tree.cdr();
+		Lexeme statements = class2FuncBody(tree.cdr());
 
-		Lexeme classEnv = Environment.newScope(env, null, null);
-		eval(classBody, classEnv);
-		Environment.insert(classEnv, Lexeme.literal(Type.IDENTIFIER, "this", -1), classEnv);
+		Lexeme funcBody = Lexeme.cons(Type.funcBody, null, statements);
 
-		Lexeme constructor = Environment.get(classEnv, Lexeme.literal(Type.IDENTIFIER, "constructor", -1));
-		Environment.insert(env, className, constructor);
+		Lexeme constructor = Lexeme.cons(Type.funcDef, className, funcBody);
 
-		
-		return null;
+		Lexeme closure = Lexeme.cons(Type.CLOSURE, constructor, env);	
+						
 
+		Environment.insert(env, className, closure);
+
+		return closure;
+
+	}
+	private static Lexeme class2FuncBody(Lexeme classBody) throws EvalException {
+		Lexeme returnStatement = returnThis();
+
+		if (classBody == null) classBody = Lexeme.cons(Type.statements, returnStatement, null);
+		else {
+			Lexeme definitions = classBody.cdr();
+			classBody          = Lexeme.cons(Type.statements, definitions.car(), definitions.cdr());
+			
+			Lexeme tail = classBody;
+			while (tail.cdr() != null) {
+				tail.type = Type.statements;
+				tail = tail.cdr();
+			}
+			tail.setRight( Lexeme.cons(Type.statements, returnStatement, null) );
+
+		}
+		return classBody;
+	}
+
+	private static Lexeme returnThis() {
+		return Lexeme.cons(Type.returnStatement, null, Lexeme.literal(Type.IDENTIFIER, "this", -1));
 	}
 
 	private static Lexeme evalArray(Lexeme tree, Lexeme env) throws EnvException, EvalException {
@@ -202,23 +225,23 @@ public class Evaluator {
 	}
 
 	private static Lexeme evalEq(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
-		l = eval(l, env);
-		r = eval(r, env);	
-		Object lVal = l.value(), rVal = r.value();
-		boolean result;
-		if (lVal == null) {
-			if (rVal == null) result = true;
-			else              result = false;
-		}
-		else result = lVal.equals(rVal);
-		
-		return Lexeme.literal(Type.BOOLEAN, result, -1);
+		return Lexeme.literal(Type.BOOLEAN, rawEq(l, r, env), -1);
 	}
 	private static Lexeme evalNeq(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
+		return Lexeme.literal(Type.BOOLEAN, ! rawEq(l, r, env), -1);
+	}
+
+	private static boolean rawEq(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
 		l = eval(l, env);
 		r = eval(r, env);	
-		boolean result = ! l.value().equals(r.value());
-		return Lexeme.literal(Type.BOOLEAN, result, -1);
+		if (l.type != r.type) return false;
+
+		Object lVal = l.value(), rVal = r.value();
+		if (lVal == null) {
+			if (rVal == null) return true;
+			else              return false;
+		}
+		return lVal.equals(rVal);
 	}
 
 	private static Lexeme evalNumCmp(Lexeme l, Lexeme r, Lexeme env, String op) throws EnvException, EvalException {
@@ -338,8 +361,10 @@ public class Evaluator {
 		Lexeme formalParams = getParams(closure);
 
 		Lexeme localEnv = Environment.newScope(staticEnv, formalParams, args);
-		//Environment.insert(localEnv, Lexeme.literal(Type.IDENTIFIER, "this", -1), localEnv);
+		Environment.insert(localEnv, Lexeme.literal(Type.IDENTIFIER, "this", -1), localEnv);
 		Lexeme body = getBody(closure);
+
+		assert(body.type == Type.statements);
 
 		Lexeme result = eval(body, localEnv);
 		if (result.type == Type.RETURNVAL) return result.cdr();

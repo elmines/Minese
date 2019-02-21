@@ -4,7 +4,7 @@
  */
 class Lexeme {
 
-	public final Type type;
+	public /*final*/ Type type;
 	public final int lineNumber;
 
 	/**

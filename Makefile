@@ -50,6 +50,10 @@ gradx: grad.min run
 	./run grad.min
 
 #My extra tests
+classes: classes.min
+	cat classes.min
+classesx: classes.min run
+	./run classes.min
 args: args.min
 	cat args.min
 argsx: args.min run
@@ -57,7 +61,7 @@ argsx: args.min run
 nulls: nulls.min
 	cat nulls.min
 nullsx: nulls.min run
-	./run nulls.min hi yo
+	./run nulls.min
 
 Minese.class: Minese.java Evaluator.class Environment.class Lexeme.class Parser.class \
 		EvalException.class
