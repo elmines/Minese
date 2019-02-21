@@ -1,90 +1,90 @@
-define swapDown(var node) {
-	var predFunc = node.predecessor;
-	var pred = predFunc();
-	if (pred != null) {
-		swapVals(pred, node);
-		return pred;
-	}		
-	var sucFunc = node.successor;
-	var suc = sucFunc();
-	if (suc != null) {
-		swapVals(suc, node);
-		return suc;
-	}
-	return node;
-}
-define swapToLeaf(var node) {
-
-	while ( (node.l != null) | (node.r != null) ) {
-		node = swapDown(node);
-	}
-	return node;
-}
-define swapVals(var nodeA, var nodeB) {
-		nodeA.val = nodeA.val + nodeB.val;
-		nodeB.val = nodeA.val - nodeB.val;
-		nodeA.val = nodeA.val - nodeB.val;
-}
-define prune(var leaf) {
-	if (leaf == leaf.parent.l) leaf.parent.l = null;
-	else                       leaf.parent.r = null;
-}
-define displayHelper(var node) {
-
-	var l = node.l;
-	var r = node.r;
-	var parent = node.parent;
-
-	if (l != null) {
-		displayHelper(l);
-		print(" ");
-	}
-
-	if (parent == null) print("[");
-	print(node.val);
-	if (parent != null) print("(", parent.val, ")");
-	if (parent == null) print("]");
-
-	if (r != null) {
-		print(" ");
-		displayHelper(r);
-	}
-}
-
-define standing(var node) {
-	if (node.parent == null) return "neither";
-
-	var parent = node.parent;
-	if (parent.balance == 0) return "neither";
-
-	if (node == parent.l) {
-		if (parent.balance > 0) return "favorite";
-		else                    return "lesser";	
-	}
-
-	if   (parent.balance < 0) return "lesser";
-	else                      return "favorite":
-
-}
 define sibling(var node) {
-	if (node.parent == null) return null;
+	var parent = node.parent;
+	if (parent == null) return null;
 
 	if (node == parent.l) return parent.r;
 	return parent.l;
 }
-define setBalance(var parent) {
-	parent.balance = 0;
-	if (parent.l != null) {
-		parent.balance = parent.balance + parent.l.height;
+define standing(var node) {
+	var parent = node.parent;
+	if (parent == null) return "neither";
+	if (parent.balance == 0) return "neither";
+
+	if (parent.balance > 0) {
+		if (node == parent.l) return "favorite";
+		else                  return "lesser";
 	}
-	if (parent.r != null) {
-		parent.balance = parent.balance - parent.r.height;
-	}
+
+	if (node == parent.r) return "favorite";
+	return "lesser";
 }
 
-define favorite(var p) {
-	if (p.balance > 0) return p.l;
-	else               return p.r;
+define linear(var son, var father, var grand) {
+
+	if (father == grand.l) {
+		if (son == father.l) return true;
+		else                 return false;
+	}
+	else {
+		if (son == father.r) return true;
+		else                 return false;
+	}
+
+}
+
+define rotate(var tree, var node) {
+	if (node == node.parent.l) rotateRight(tree, node);
+	else                       rotateLeft(tree, node);
+}
+define rotateRight(var tree, var node) {
+	var root = tree.root;
+	var orig = node;
+	var origParent = node.parent;
+	var origGrandparent = origParent.parent;
+
+	if (origParent != root) {
+		if (origParent == origGrandparent.l) origGrandparent.l = node;
+		else                                 origGrandparent.r = node;
+	}
+	orig.parent = origGrandparent;
+	origParent.parent = orig;
+
+	var origRight = orig.r;
+	origParent.l = origRight;
+	if (origRight != null) origRight.parent = origParent;
+
+	orig.r = origParent;
+
+	if (origParent == root) {
+		tree.root = node;
+		tree.root.parent = null;
+	}
+
+}
+define rotateLeft(var tree, var node) {
+	var root = tree.root;
+	var orig = node;
+	var origParent = node.parent;
+	var origGrandparent = origParent.parent;
+
+	if (origParent != root) {
+		if (origParent == origGrandparent.l) origGrandparent.l = node;
+		else                                 origGrandparent.r = node;
+	}
+	orig.parent = origGrandparent;
+	origParent.parent = orig;
+
+	var origLeft = orig.l;
+	origParent.r = origLeft;
+	if (origLeft != null) origLeft.parent = origParent;
+
+	orig.l = origParent;
+
+	if (origParent == root) {
+		tree.root = node;
+		tree.root.parent = null;
+	}
+
 }
 
 class Node {
@@ -93,12 +93,8 @@ class Node {
 	var l = null;
 	var r = null;
 
-	var height = 0;
+	var height = 1;
 	var balance = 0;
-
-	define isLeaf() {
-		return (l == null) & (r == null);
-	}
 
 	define predecessor() {
 		if (l == null) return null;
@@ -121,13 +117,50 @@ class Node {
 		}
 		return trailing;
 	}
+	define displayHelper() {
+		if (l != null) {
+			l.displayHelper();
+			print(" ");
+		}
+	
+		if (parent == null) print("[");
+		print(val);
+		if (parent != null) print("(", parent.val, ")");
+		if (parent == null) print("]");
+	
+		if (r != null) {
+			print(" ");
+			r.displayHelper();
+		}
+	}
+
+	define setBalance(){
+		balance = 0;
+		var childHeight = 1;
+		if (l != null) {
+			balance = balance + l.height;
+			if (l.height > childHeight) childHeight = l.height;
+		}
+		if (r != null) {
+			balance = balance - r.height;
+			if (r.height > childHeight) childHeight = r.height;
+		}
+		height = childHeight + 1;
+	}
+	
+	define favorite() {
+		if      (balance == 0) return null;
+		else if (balance > 0)  return l;
+		else                   return r;
+	}
+
 }
 
 class Tree {
 	var root = null;
 
 	define display() {
-		if (this.root != null) displayHelper(this.root);
+		if (root != null) root.displayHelper();
 		println();
 		return;
 	}
@@ -163,38 +196,16 @@ class Tree {
 		if (newVal <= prev.val) prev.l = leaf;
 		else                    prev.r = leaf;
 
-		//insertFixup(leaf);
+		insertFixup(leaf);
 
 		return leaf;
-	}
-
-	define delete(var toDel) {
-		var leaf;
-		var node = root;
-		while (node != null) {
-			if      (toDel < node.val) node = node.l;
-			else if (toDel > node.val) node = node.r;
-			else {
-				leaf = swapToLeaf(node);
-
-				//deleteFixup(leaf);
-
-				if (leaf == root) root = null;
-				else              prune(leaf);
-			
-				return leaf;
-			}
-		}
-
-		return null;
 	}
 
 
 	define insertFixup(var leaf) {
 		var x = leaf;
-		var y;
+		var fav;
 		var p;
-		var sib;
 		var stding;
 
 		while ( true ) {
@@ -203,44 +214,46 @@ class Tree {
 			p = x.parent;
 
 			stding = standing(x);
-			sib = sibling(x);
 
 			if (stding == "lesser") {
-				setBalance(p);
+				p.setBalance();
 				return;
 			}
 			else if (stding == "neither") {
-				setBalance(p);
+				p.setBalance();
 				x = p;
 			}
 			else {
-				y = favorite(x);
+				fav = x.favorite();
+
+				if ( (fav != null) & (! ( linear(fav, x, p) )  )) {
+					rotate(fav); //Rotate to x
+					rotate(fav); //Rotate to p
+					setBalance(x);
+					setBalance(p);
+					setBalance(fav);
+				}
+				else {
+					rotate(x);
+					x.setBalance();
+					p.setBalance();
+				}
+				return;
 			}
-				
-
 		}
-
-
-		return null;
 	}
-
-
-
 }
 
 define interpreter(var fp) {
 	var tree = Tree();
 	var display = tree.display;
 	var insert = tree.insert;
-	var delete = tree.delete;
 
 	var command;
 	var arg;
 
-
 	while ( hasNext(fp) ) {
 		command = atoi( next(fp) );
-
 
 		if (command == 0) {
 			display();
@@ -249,19 +262,10 @@ define interpreter(var fp) {
 			arg = atoi( next(fp) );
 			insert(arg);
 		}
-		else if ( command == 2 ) {
-			arg = atoi( next(fp) );	
-			delete(arg);
-		}
 
 	}
 
 }
 
 
-define main(var filePath) {
-	var fp = open(filePath);
-
-	interpreter(fp);
-
-}
+define main(var filePath) { interpreter( open(filePath) ); }
