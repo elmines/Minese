@@ -1,10 +1,206 @@
+class Node {
+	var val = null;
+	var parent = null;
+	var l = null;
+	var r = null;
+
+	define isLeaf() {
+		return (l == null) & (r == null);
+	}
+
+	define predecessor() {
+		if (l == null) return null;
+
+		var trailing = l;
+		var curr = l.r;
+		while (curr != null) {
+			trailing = curr;
+			curr = curr.r;
+		}
+		return trailing;
+	}
+	define successor() {
+		if (r == null) return null;
+		var trailing = r;
+		var curr = r.l;
+		while (curr != null) {
+			trailing = curr;
+			curr = curr.l;
+		}
+		return trailing;
+	}
+}
+
+class Tree {
+
+	var root = null;
+
+
+	define display() {
+		if (this.root != null) displayHelper(this.root);
+		println();
+		return;
+	}
+
+	define displayHelper(var node) {
+
+		var l = node.l;
+		var r = node.r;
+		var parent = node.parent;
+
+		if (l != null) {
+			displayHelper(l);
+			print(" ");
+		}
+
+		if (parent == null) print("[");
+		print(node.val);
+		if (parent != null) print("(", parent.val, ")");
+		if (parent == null) print("]");
+
+		if (r != null) {
+			print(" ");
+			displayHelper(r);
+		}
+
+	}
+
+	define insert(var newVal) {
+
+		if (this.root == null) {
+			root = Node();
+			root.val = newVal;
+			return this.root;
+		}
+
+		var prev = null;
+		var node = this.root;
+
+		while (node != null) {
+
+			if (newVal <= node.val) {
+				prev = node;
+				node = node.l;
+			}
+			else {
+				prev = node;
+				node = node.r;
+			}
+		}
+
+		var leaf = Node();
+		leaf.val = newVal;
+		leaf.parent = prev;
+
+		if (newVal <= prev.val) prev.l = leaf;
+		else                    prev.r = leaf;
+
+		//insertFixup(leaf);
+
+		return leaf;
+	}
+
+	define delete(var toDel) {
+		var leaf;
+		var node = root;
+		while (node != null) {
+			if      (toDel < node.val) node = node.l;
+			else if (toDel > node.val) node = node.r;
+			else {
+				leaf = swapToLeaf(node);
+
+				//deleteFixup(leaf);
+
+				if (leaf == root) root = null;
+				else              prune(leaf);
+			
+				return leaf;
+			}
+		}
+
+		return null;
+	}
+
+	define swapToLeaf(var node) {
+
+		while ( (node.l != null) | (node.r != null) ) {
+			node = swapDown(node);
+		}
+		return node;
+	}
+
+	define swapDown(var node) {
+		var predFunc = node.predecessor;
+		var pred = predFunc();
+		if (pred != null) {
+			swapVals(pred, node);
+			return pred;
+		}		
+
+		var sucFunc = node.successor;
+		var suc = sucFunc();
+		if (suc != null) {
+			swapVals(suc, node);
+			return suc;
+		}
+
+		return node;
+	}
+	define swapVals(var nodeA, var nodeB) {
+			nodeA.val = nodeA.val + nodeB.val;
+			nodeB.val = nodeA.val - nodeB.val;
+			nodeA.val = nodeA.val - nodeB.val;
+	}
+	define prune(var leaf) {
+		if (leaf == leaf.parent.l) leaf.parent.l = null;
+		else                       leaf.parent.r = null;
+	}
+
+	define insertFixup(var leaf) {
+		return null;
+	}
+
+	define deleteFixup(var leaf) {
+		return null;
+	}
+
+
+}
+
+define interpreter(var fp) {
+	var tree = Tree();
+	var display = tree.display;
+	var insert = tree.insert;
+	var delete = tree.delete;
+
+	var command;
+	var arg;
+
+
+	while ( hasNext(fp) ) {
+		command = atoi( next(fp) );
+
+
+		if (command == 0) {
+			display();
+		}
+		else if (command == 1) {
+			arg = atoi( next(fp) );
+			insert(arg);
+		}
+		else if ( command == 2 ) {
+			arg = atoi( next(fp) );	
+			delete(arg);
+		}
+
+	}
+
+}
+
 
 define main(var filePath) {
 	var fp = open(filePath);
-	var value;
-	while (hasNext(fp)) {
-		value = atoi( next(fp) );
-		println(value, " ", value + 5);
-	}
+
+	interpreter(fp);
 
 }
