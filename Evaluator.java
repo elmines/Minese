@@ -236,6 +236,10 @@ public class Evaluator {
 		r = eval(r, env);	
 		if (l.type != r.type) return false;
 
+		if (l.type == Type.environment && r.type == Type.environment) {
+			return l == r;
+		}
+
 		Object lVal = l.value(), rVal = r.value();
 		if (lVal == null) {
 			if (rVal == null) return true;
