@@ -1,26 +1,41 @@
+class Meta {
+	var title = "";
+	var plane = "xy";
+
+}
 class Rectangle {
 
 	var length = 5;
 	var width = 5;
 
+	var meta = Meta();
+
+	define mutate() {
+		this.length = this.length + 1;
+	}
 	
-	define area() { return length * width; }
+	define area() { mutate(); return length * width; }
 
 }
 
 define main() {
 	var x = Rectangle();
-	var xArea = x.area;
-	x.length = 10;
-	x.width = 20;
-
+	//var xArea = x.area;
+	//x.length = 10;
+	//x.width = 20;
 
 	var y = Rectangle();
-	var yArea = y.area;
-	y.length = 40;
-	y.width = 100;
+	//var yArea = y.area;
+	//y.length = 40;
+	//y.width = 100;
 
-	println(xArea());
-	println(yArea());
+	//println(xArea());
+	//println(yArea());
+
+	//println(xArea());
+
+	println(x.meta.plane);
+	x.meta.plane = "Non-euclidean";
+	println(x.meta.plane);
 
 }

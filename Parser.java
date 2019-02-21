@@ -201,11 +201,11 @@ public class Parser {
 	}
 	private Lexeme expression2() throws LexException, SyntaxException {
 		Lexeme expr = unary();
-		if ( check(Type.DOT) ) {
-			Lexeme assign = match(Type.DOT);
-			assign.setLeft(expr);
-			assign.setRight(expression2());
-			expr = assign;
+		while ( check(Type.DOT) ) {
+			Lexeme dot = match(Type.DOT);
+			dot.setLeft(expr);
+			dot.setRight(unary());
+			expr = dot;
 		}
 		return expr;
 	}
