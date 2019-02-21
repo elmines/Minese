@@ -273,6 +273,12 @@ public class Evaluator {
 	private static Lexeme evalPlus(Lexeme l, Lexeme r, Lexeme env) throws EnvException, EvalException {
 		l = eval(l, env);
 		r = eval(r, env);
+
+		if (l.type == Type.STRING && r.type == Type.STRING) {
+			String lStr = (String) l.value(), rStr = (String) r.value();
+			return Lexeme.literal(Type.STRING, lStr+rStr, -1);
+		}
+
 		if (l.type != Type.INTEGER || r.type != Type.INTEGER) {
 			throw new EvalException("Tried to perform operation "+Type.PLUS +
 				" on types " + l.type + " and " + r.type);
@@ -355,10 +361,17 @@ public class Evaluator {
 	 * This is public so our main program can directly call a "main" method in env
 	 */
 	public static Lexeme evalFuncCall(Lexeme tree, Lexeme env) throws EnvException, EvalException {
-		Lexeme identifier = tree.car();
+		Lexeme id = tree.car();
 		Lexeme args = evalArgs(tree.cdr(), env);
-		if (isBuiltIn(identifier)) return evalBuiltIn(identifier, args);
-		Lexeme closure = Environment.get(env, identifier);
+
+		Lexeme closure;
+		if (id.type == Type.IDENTIFIER) {
+			if (isBuiltIn(id)) return evalBuiltIn(id, args);
+			closure = Environment.get(env, id);
+		}
+		else {
+			closure = eval(id, env);
+		}
 
 
 		Lexeme staticEnv = closure.cdr();

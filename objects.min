@@ -1,0 +1,49 @@
+class Meta {
+	var title = "";
+	var plane = "";
+
+	define description() return title + " lying in the " + plane + " plane";
+
+}
+class Rectangle {
+
+	var length = 5;
+	var width = 5;
+
+	var meta = Meta();
+
+	define setLength(var l) { length = l; }
+	define setWidth(var w) {width = w;}
+
+	define mutate() {
+		this.length = this.length + 1;
+	}
+	
+	define area() { mutate(); return length * width; }
+
+}
+
+define main() {
+	var x = Rectangle();
+	x.setLength(10);
+	x.setWidth(20);
+	x.meta.title = "Soccer field";
+	x.meta.plane = "Euclidean";
+
+	var y = Rectangle();
+	y.length = 40;
+	y.width = 100;
+	var yMeta = y.meta;
+	yMeta.title = "Interstellar Basketball Court";
+	yMeta.plane = "Hyperbolic";
+
+	println("X");
+	println("	", x.meta.description());
+	println("	", "Area: ", x.area());
+
+	println("Y");
+	println("	", yMeta.description());
+	println("	", "Area: ", y.area());
+
+
+}

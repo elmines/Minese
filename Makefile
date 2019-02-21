@@ -43,6 +43,10 @@ lambda: lambda.min
 	cat lambda.min
 lambdax: lambda.min run
 	./run lambda.min
+objects: objects.min
+	cat objects.min
+objectsx: objects.min run
+	./run objects.min
 
 grad: grad.min
 	cat grad.min
@@ -50,10 +54,6 @@ gradx: grad.min run
 	./run grad.min
 
 #My extra tests
-classes: classes.min
-	cat classes.min
-classesx: classes.min run
-	./run classes.min
 args: args.min
 	cat args.min
 argsx: args.min run

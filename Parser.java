@@ -207,6 +207,15 @@ public class Parser {
 			dot.setRight(unary());
 			expr = dot;
 		}
+
+		if (check(Type.OPAREN)) {
+			advance();
+			Lexeme args = expressionPending() ? exprList() : null;
+			match(Type.CPAREN);
+			return Lexeme.cons(Type.funcCall, expr, args);
+		}
+
+
 		return expr;
 	}
 
@@ -240,9 +249,10 @@ public class Parser {
 			match(Type.CPAREN);
 			return expr;
 		}
-		if (idOperationPending())   return idOperation();
+		//if (idOperationPending())   return idOperation();
 		if (arrayPending())         return array();
 		if (anonFunctionPending())  return anonFunction();
+		if (check(Type.IDENTIFIER)) return advance();
 		if (check(Type.BOOLEAN))    return advance();
 		if (check(Type.INTEGER))    return advance();
 		if (check(Type.STRING))     return advance();
@@ -256,9 +266,10 @@ public class Parser {
 		return  check(Type.MINUS)       ||
 			check(Type.NOT)         ||
 			check(Type.OPAREN)      ||
-			idOperationPending()    ||
+			//idOperationPending()    ||
 			arrayPending()          ||
 			anonFunctionPending()   ||
+			check(Type.IDENTIFIER)  ||
 			check(Type.BOOLEAN)     ||
 			check(Type.INTEGER)     ||
 			check(Type.STRING)      ||
@@ -336,6 +347,7 @@ public class Parser {
 	private Lexeme advance() throws LexException {
 		Lexeme old = this.curr;
 		this.curr = lexer.lex();	
+
 		return old;
 	}
 
