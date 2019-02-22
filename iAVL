@@ -20,7 +20,6 @@ define standing(var node) {
 }
 
 define linear(var son, var father, var grand) {
-
 	if (father == grand.l) {
 		if (son == father.l) return true;
 		else                 return false;
@@ -28,61 +27,6 @@ define linear(var son, var father, var grand) {
 	else {
 		if (son == father.r) return true;
 		else                 return false;
-	}
-
-}
-
-define rotate(var tree, var node) {
-	if (node == node.parent.l) rotateRight(tree, node);
-	else                       rotateLeft(tree, node);
-}
-define rotateRight(var tree, var node) {
-	var root = tree.root;
-	var orig = node;
-	var origParent = node.parent;
-	var origGrandparent = origParent.parent;
-
-	if (origParent != root) {
-		if (origParent == origGrandparent.l) origGrandparent.l = node;
-		else                                 origGrandparent.r = node;
-	}
-	orig.parent = origGrandparent;
-	origParent.parent = orig;
-
-	var origRight = orig.r;
-	origParent.l = origRight;
-	if (origRight != null) origRight.parent = origParent;
-
-	orig.r = origParent;
-
-	if (origParent == root) {
-		tree.root = node;
-		tree.root.parent = null;
-	}
-
-}
-define rotateLeft(var tree, var node) {
-	var root = tree.root;
-	var orig = node;
-	var origParent = node.parent;
-	var origGrandparent = origParent.parent;
-
-	if (origParent != root) {
-		if (origParent == origGrandparent.l) origGrandparent.l = node;
-		else                                 origGrandparent.r = node;
-	}
-	orig.parent = origGrandparent;
-	origParent.parent = orig;
-
-	var origLeft = orig.l;
-	origParent.r = origLeft;
-	if (origLeft != null) origLeft.parent = origParent;
-
-	orig.l = origParent;
-
-	if (origParent == root) {
-		tree.root = node;
-		tree.root.parent = null;
 	}
 
 }
@@ -95,6 +39,7 @@ class Node {
 
 	var height = 1;
 	var balance = 0;
+
 
 	define predecessor() {
 		if (l == null) return null;
@@ -117,15 +62,27 @@ class Node {
 		}
 		return trailing;
 	}
+
+	define printVal() {
+		print(val); //, "h:", height);
+		if (balance > 0)      print("+");
+		else if (balance < 0) print("-");
+	}
+
 	define displayHelper() {
 		if (l != null) {
 			l.displayHelper();
 			print(" ");
 		}
-	
 		if (parent == null) print("[");
-		print(val);
-		if (parent != null) print("(", parent.val, ")");
+
+		printVal();
+
+		if (parent != null) {
+			print("(");
+			parent.printVal();
+			print(")");
+		}
 		if (parent == null) print("]");
 	
 		if (r != null) {
@@ -136,7 +93,7 @@ class Node {
 
 	define setBalance(){
 		balance = 0;
-		var childHeight = 1;
+		var childHeight = 0;
 		if (l != null) {
 			balance = balance + l.height;
 			if (l.height > childHeight) childHeight = l.height;
@@ -153,7 +110,6 @@ class Node {
 		else if (balance > 0)  return l;
 		else                   return r;
 	}
-
 }
 
 class Tree {
@@ -227,21 +183,79 @@ class Tree {
 				fav = x.favorite();
 
 				if ( (fav != null) & (! ( linear(fav, x, p) )  )) {
+					//println("Doing a nonlinear rotation");
 					rotate(fav); //Rotate to x
 					rotate(fav); //Rotate to p
-					setBalance(x);
-					setBalance(p);
-					setBalance(fav);
+					x.setBalance();
+					p.setBalance();
+					fav.setBalance();
 				}
 				else {
 					rotate(x);
-					x.setBalance();
 					p.setBalance();
+					x.setBalance();
 				}
 				return;
 			}
 		}
 	}
+
+	define rotate(var node) {
+		if (node == node.parent.l) rotateRight(node);
+		else                       rotateLeft(node);
+	}
+	define rotateRight(var node) {
+		var origRoot = root;
+		var orig = node;
+		var origParent = node.parent;
+		var origGrandparent = origParent.parent;
+	
+		if (origParent != origRoot) {
+			if (origParent == origGrandparent.l) origGrandparent.l = node;
+			else                                 origGrandparent.r = node;
+		}
+		orig.parent = origGrandparent;
+		origParent.parent = orig;
+	
+		var origRight = orig.r;
+		origParent.l = origRight;
+		if (origRight != null) origRight.parent = origParent;
+	
+		orig.r = origParent;
+	
+		if (origParent == origRoot) {
+			root = node;
+			root.parent = null;
+		}
+	
+	}
+	define rotateLeft(var node) {
+		var origRoot = root;
+		var orig = node;
+		var origParent = node.parent;
+		var origGrandparent = origParent.parent;
+	
+		if (origParent != origRoot) {
+			if (origParent == origGrandparent.l) origGrandparent.l = node;
+			else                                 origGrandparent.r = node;
+		}
+		orig.parent = origGrandparent;
+		origParent.parent = orig;
+	
+		var origLeft = orig.l;
+		origParent.r = origLeft;
+		if (origLeft != null) origLeft.parent = origParent;
+	
+		orig.l = origParent;
+	
+		if (origParent == origRoot) {
+			root = node;
+			root.parent = null;
+		}
+	
+	}
+
+
 }
 
 define interpreter(var fp) {

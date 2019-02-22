@@ -3,14 +3,14 @@
 
 JVM=java
 COMP=javac
-OPTS=-Xlint -g
+OPTS=-Xlint
 
 run: Minese.class scriptText.txt
 	cp scriptText.txt run
 	chmod +x run
 
 problem: iAVL
-	cat iAVL
+	cat testCase
 problemx: iAVL run testCase
 	./run iAVL testCase
 
