@@ -9,6 +9,27 @@ run: Minese.class scriptText.txt
 	cp scriptText.txt run
 	chmod +x run
 
+error1: error1.min
+	cat erro1.min
+error1x: error1.min run
+	./run error1.min
+error2: error2.min
+	cat error2.min
+error2x: error2.min run
+	./run error2.min
+error3: error3.min
+	cat error3.min
+error3x: error3.min run
+	./run error3.min
+error4: error4.min
+	cat error4.min
+error4x: error4.min run
+	./run error4.min
+error5: error5.min
+	cat error5.min
+error5x: error5.min run
+	./run error5.min
+
 problem: iAVL
 	cat testCase
 problemx: iAVL run testCase

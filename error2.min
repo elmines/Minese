@@ -1,0 +1,5 @@
+
+define main() {
+	var x = 3;
+	var y = 5;
+

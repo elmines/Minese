@@ -137,7 +137,7 @@ public class Evaluator {
 
 		Lexeme condition = eval(symCondition, env);
 		if (condition.type != Type.BOOLEAN)
-			throw new EnvException("Tried to interpret " + condition.type + " as a "+Type.BOOLEAN);
+			throw new EnvException("Expected a "+Type.BOOLEAN + " condition, got a(n) " + condition.type);
 
 		Lexeme body = tree.cdr();
 		while ( (Boolean) condition.value() ) {
@@ -154,7 +154,7 @@ public class Evaluator {
 		Lexeme condition = eval(tree.car().car(), env);
 
 		if (condition.type != Type.BOOLEAN)
-			throw new EnvException("Tried to interpret " + condition.type + " as a "+Type.BOOLEAN);
+			throw new EnvException("Expected a "+Type.BOOLEAN + " condition, got a(n) " + condition.type);
 
 		if ( (Boolean) condition.value() ) {
 			Lexeme body = tree.car().cdr();

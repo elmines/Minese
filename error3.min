@@ -1,0 +1,8 @@
+
+define main() {
+	println(f(3));
+}
+
+define f var x {
+	return x + 2;
+}

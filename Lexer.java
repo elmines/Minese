@@ -235,36 +235,27 @@ public class Lexer {
 		
 		int lineNumDigits = new Integer(this.lineNumber).toString().length();
 
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < lineNumDigits + 2; ++i) sb.append(' '); //Move past line number
-		for (int i = 0; i < this.currLine.length() - 1; ++i) sb.append(' ');
-		sb.append('^');
-
 		if (this.ch != '\n') consumeLine(); //Get rest of line for the error message
 
 		String fullMessage;
 		if (this.lineNumber > 1) {
-			String fmtString = "Lexing error at line %d: %s\n" +
+			String fmtString = "Parsing error at line %d: %s\n" +
 					"%" + lineNumDigits + "d: %s\n" +
-					"%" + lineNumDigits + "d: %s\n" +
-					"%s";
+					"%" + lineNumDigits + "d: %s";
 
 			fullMessage = String.format(fmtString,
 				this.lineNumber, baseMessage,
 				this.lineNumber-1, this.prevLine,
-				this.lineNumber, this.currLine.toString(),
-				sb.toString()
+				this.lineNumber, this.currLine.toString()
 			);
 		}
 		else {
-			String fmtString = "Lexing error at line %d: %s\n" +
-					"%" + lineNumDigits + "d: %s\n" +
-					"%s";
+			String fmtString = "Parsing error at line %d: %s\n" +
+					"%" + lineNumDigits + "d: %s";
 
 			fullMessage = String.format(fmtString,
 				this.lineNumber, baseMessage,
-				this.lineNumber, this.currLine.toString(),
-				sb.toString()
+				this.lineNumber, this.currLine.toString()
 			);
 
 

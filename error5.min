@@ -1,0 +1,4 @@
+define main() {
+	var x = 4;
+	if ( x = 3 ) println("No C-like freedom, here!");
+}

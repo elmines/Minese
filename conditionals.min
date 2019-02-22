@@ -2,11 +2,11 @@ define description(var x)
 	{
 		print("x = ", x, ": ");
 
-		if ( (x % 3 == 0) & (x % 2 == 0) ) 
+		if ( ( (x % 3) == 0) & ( (x % 2) == 0) ) 
 			println("x is divisible by 6!");
-		else if ( x % 3 == 0)
+		else if ( (x % 3) == 0)
 			println("x is divisible by 3!");
-		else if ( x % 2 == 0)
+		else if ( (x % 2) == 0)
 			{
 			println("x is even!");
 			}

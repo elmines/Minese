@@ -314,13 +314,14 @@ public class Parser {
 	//Input processing
 	private Lexer lexer;
 	private Lexeme curr;
-	private static final String syntaxFmt = "Error on line %d: Expected %s, found %s";
+	private static final String syntaxFmt = "Parsing error on line %d: Expected %s, found %s";
 
 	/**
 	 * @return The matched lexeme
 	 */
 	private Lexeme match(Type t) throws LexException, SyntaxException {
 		if (!check(t)) {
+			if (this.curr.type == Type.EOF) throwEOFException(t);
 			throw new SyntaxException(String.format(syntaxFmt, this.curr.lineNumber, t, this.curr.type));
 		}
 		return advance();
@@ -331,7 +332,7 @@ public class Parser {
 	 */
 	private Lexeme match(Group g) throws LexException, SyntaxException {
 		if (!check(g)) {
-			String fmt = "Error on line %d: Expected %s, found %s";
+			String fmt = "Parsing error on line %d: Expected %s, found %s";
 			throw new SyntaxException(String.format(fmt, this.curr.lineNumber, g.name, this.curr.type));
 		}
 		return advance();
@@ -349,6 +350,10 @@ public class Parser {
 		this.curr = lexer.lex();	
 
 		return old;
+	}
+
+	private static void throwEOFException(Type t) throws SyntaxException {
+		throw new SyntaxException("Reached end of file while parsing: expected a(n) " + t);
 	}
 
 
