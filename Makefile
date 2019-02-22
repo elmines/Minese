@@ -31,9 +31,9 @@ error5x: error5.min run
 	./run error5.min
 
 problem: iAVL
-	cat testCase
-problemx: iAVL run testCase
-	./run iAVL testCase
+	cat commands
+problemx: iAVL run commands
+	./run iAVL commands
 
 arrays: arrays.min
 	cat arrays.min
