@@ -32,9 +32,9 @@ class Person {
 define hi() println("Hi");
 
 //An executable program must have a main method
-//A set number of command-line arguments can be passed as Strings
+//A set number of command-line arguments can be passed as strings
 define main(var arg1, var arg2) {
-	var concatenatedArgs = arg1 + arg2;
+	var num1 = atoi(arg1); //Use the built-in atoi to convert strings to integers
 
 	//All types are dynamic
 	var x = [5, 3, 4, "Minese", 9]; //An array
