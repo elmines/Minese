@@ -3,11 +3,13 @@
 
 JVM=java
 COMP=javac
-OPTS=-Xlint -g
+OPTS=-Xlint
 
 run: Minese.class scriptText.txt
 	cp scriptText.txt run
 	chmod +x run
+
+test: error1x error2x error3x error4x error5x arraysx conditionalsx recursionx iterationx functionsx lambdax objectsx problemx
 
 error1: error1.min
 	cat erro1.min
@@ -33,7 +35,7 @@ error5x: error5.min run
 problem: iAVL
 	cat commands
 problemx: iAVL run commands
-	./run iAVL commands hi
+	./run iAVL commands
 
 arrays: arrays.min
 	cat arrays.min
