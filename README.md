@@ -6,7 +6,7 @@ A program consists of definitions (of variables, functions, and/or classes):
 ## Executing a program
 ```
 make
-./run <program_name>.min
+./run <program_name>.min arg0 arg1 arg2 ... argN
 ```
 
 
@@ -32,12 +32,15 @@ class Person {
 define hi() println("Hi");
 
 //An executable program must have a main method
-//A set number of command-line arguments can be passed as strings
-define main(var arg1, var arg2) {
-	var num1 = atoi(arg1); //Use the built-in atoi to convert strings to integers
+//A command-line arguments are passed in as an array of strings
+define main(var args) {
+	if (len(args) < 1) return; //Return from a function with our without an expression
+
+	var arg0 = get(args, 0);
+	var num1 = atoi(arg0); //Use the built-in atoi to convert strings to integers
 
 	//All types are dynamic
-	var x = [5, 3, 4, "Minese", 9]; //An array
+	var x = [5, 3, 4, "Minese", 9]; //An array literal
 
 	//Use the builtins len, get, set, and append to use arrays
 	var i = 0;
@@ -76,6 +79,10 @@ define main(var arg1, var arg2) {
 	ethan.name = "Ethan";
 	ethan.surname = "Mines";
 	println( ethan.description() );
+
+	var jerry = null;
+	if (jerry != null) println("jerry references something!");
+	if (ethan == jerry) println("ethan and jerry have reference equality!");
 
 }
 ```

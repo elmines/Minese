@@ -18,7 +18,8 @@ public class Evaluator {
 		if (tree.type == Type.INTEGER) return tree;
 		if (tree.type == Type.STRING) return tree;
 		if (tree.type == Type.BOOLEAN) return tree;
-		if (tree.type == Type.array) return evalArray(tree, env);
+		if (tree.type == Type.arrayLit) return evalArrayLit(tree, env);
+		if (tree.type == Type.array) return tree;
 		if (tree.type == Type.anonFunction) return evalLambda(tree, env);
 
 		if (tree.type == Type.IDENTIFIER) return Environment.get(env, tree);
@@ -102,7 +103,7 @@ public class Evaluator {
 		return Lexeme.cons(Type.returnStatement, null, Lexeme.literal(Type.IDENTIFIER, "this", -1));
 	}
 
-	private static Lexeme evalArray(Lexeme tree, Lexeme env) throws EnvException, EvalException {
+	private static Lexeme evalArrayLit(Lexeme tree, Lexeme env) throws EnvException, EvalException {
 		ArrayList<Lexeme> array = new ArrayList<Lexeme>();
 		Lexeme elements = tree.cdr();
 		while (elements != null) {

@@ -281,5 +281,8 @@ define interpreter(var fp) {
 
 }
 
+define main(var args) {
+	var filePath = get(args, 0);
+	interpreter( open(filePath) );
 
-define main(var filePath) { interpreter( open(filePath) ); }
+}

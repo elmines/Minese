@@ -5,6 +5,7 @@
 
 import java.io.PushbackInputStream;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 
 public class Minese {
 
@@ -43,18 +44,15 @@ public class Minese {
 		//First arg-source file
 		if (args.length < 2) return null;
 
-		Lexeme root = Lexeme.cons(Type.exprList,
-			Lexeme.literal(Type.STRING, args[1], -1),
-			null);
-		Lexeme parent = root;
-		for (int i = 2; i < args.length; ++i) {
-			Lexeme arg = Lexeme.cons(Type.exprList,
-					Lexeme.literal(Type.STRING, args[i], -1),
-					null);
-			parent.setRight(arg);
-			parent = arg;
+		ArrayList<Lexeme> a = new ArrayList<>();
+		for (int i = 1; i < args.length; ++i) {
+			Lexeme arg = Lexeme.literal(Type.STRING, args[i], -1);
+			a.add(arg);
 		}
-		return root;
+		Lexeme array = Lexeme.cons(Type.exprList,
+			Lexeme.literal(Type.array, a, -1),
+			null);
+		return array;
 	}
 
 }

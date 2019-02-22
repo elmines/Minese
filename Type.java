@@ -32,6 +32,7 @@ public enum Type {
 
 	anonFunction,
 	array,
+	arrayLit,
 	condStatement,
 	whileStatement,
 	funcCall,

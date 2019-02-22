@@ -300,7 +300,7 @@ public class Parser {
 		Lexeme elements = null;
 		if (expressionPending()) elements = exprList();
 		match(Type.CBRACK);
-		return Lexeme.cons(Type.array, null, elements);
+		return Lexeme.cons(Type.arrayLit, null, elements);
 	}
 	private boolean arrayPending() { return check(Type.OBRACK); }
 	private Lexeme anonFunction() throws LexException, SyntaxException {
