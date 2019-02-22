@@ -1,50 +1,58 @@
 # Minese
 A dynamically-typed, interpreted programming language by Ethan Mines
 
-## Program Structure
 A program consists of definitions (of variables, functions, and/or classes):
 
+## Executing a program
 ```
+make
+./run <program_name>.min
+```
+
+
+## Sample Code
+```
+//Declare all variables (including formal parameters) with var
 var global = 5;
 
 /* Comments are C-style */
 class Person {
 
-	var name; //An instance variable
+	var name;              //An instance variable
+	var surname = "Smith"; //Default value
 
-	define constructor(var n) {
-		name = n;
-	}	
-}
-//A subclass
-class Student extends Person {
-	var GPA;
-	define constructor(var n, var g) {
-		super(n);
-		GPA = g;	
+	define description() {
+		return name + " " + surname; //Concatenate strings with +
 	}
-
-	//A block needs no braces if it only has one statement
-	define toString() return n + ": " + g;
 
 }
 
-define main() {
+//For conditional statements, loops, and function bodies,
+// you can omit the braces if you've only one statement
+define hi() println("Hi");
 
-	var i = 0;
-	while (i < 10) {
-		if (i % 15 == 0)     print("Fizzbuzz");
-		else if (i % 3 == 0) print("Fizz");
-		else if (i % 5 == 0) print("Buzz");
-		else                 print("...");
-
-		i = i + 1;
-	}
+//An executable program must have a main method
+//A set number of command-line arguments can be passed as Strings
+define main(var arg1, var arg2) {
+	var concatenatedArgs = arg1 + arg2;
 
 	//All types are dynamic
 	var x = [5, 3, 4, "Minese", 9]; //An array
-	print(x[3] + " is the best language ever!"); //0-based array indexing
 
+	//Use the builtins len, get, set, and append to use arrays
+	var i = 0;
+	while (i < len(x)) {
+		println( get(x, i) );   //Use println (or print) to print to standard out
+		i = i + 1;
+	}
+	append(x, "Arrays are dynamic!");
+	set(x, 1, 42); //Set the first element to 42
+
+	var num = get(x, 4);
+	if      ((num % 15) == 0) { println("Fizzbuzz"); }
+	else if ((num % 3 ) == 0)   println("Fizz");
+	else if ((num % 5 ) == 0)   println("Buzz");
+	else                        println("...");
 
 	//An anonymous function
 	var summation = lambda(var accumulator, var operand) return accumulator + operand; ;
@@ -53,29 +61,21 @@ define main() {
 	define reduce(var values, var reduction) {
 		var accumulator = 0;
 		var i = 0;
-		while ( i < values.length() ) {
-			accumulator = reduction(accumulator, values[i]);
+		while ( i < len(values) ) {
+			accumulator = reduction(accumulator, get(values, i));
 			i = i + 1;
 		}
 		return accumulator;
 	}
 
 	var nums = [68, 42, 21, 11];
-	print("The sum of those numbers is " + reduce(nums, reduction));
+	println("The sum of those numbers is ", reduce(nums, summation));
+
+	//Construct an object (constructors are not parameterized)
+	var ethan = Person();
+	ethan.name = "Ethan";
+	ethan.surname = "Mines";
+	println( ethan.description() );
 
 }
 ```
-
-## Lexer Test Cases
-- test1.min: A more complicated program utilizing most of the program's features
-- test2.min: Various conditional statements, and boolean literals
-- test3.min: Rather awkward whitespace and comments
-- test4.min: Boolean expressions
-- test5.min: Program with illegal character $
-
-## Parser Test Cases
-- test1.min: A more complicated program utilizing most of the program's features (legal)
-- test2.min: Control flow and loops (legal)
-- test3.min: Extensive nesting of functions (legal)
-- test4.min: A subclass missing the superclass name in its header (illegal)
-- test5.min: An arithmetic expression where a comma was used instead of an operator (illegal)
