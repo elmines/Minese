@@ -45,11 +45,9 @@ public class Parser {
 		match(Type.OCURLY);
 		Lexeme body = program();
 		match(Type.CCURLY);
-		Lexeme cls = Lexeme.cons(Type.classDef, className, body);
 
-		if (superclassName != null) return Lexeme.cons(Type.subclassDef, superclassName, cls);
-		return cls;
-
+		Lexeme cls = Lexeme.cons(Type.GLUE, className, body);
+		return Lexeme.cons(Type.classDef, superclassName, cls);
 
 	}
 	private boolean classDefPending() {return check(Type.CLASS);}

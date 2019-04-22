@@ -52,6 +52,7 @@ public enum Type {
 	environment,
 	TABLE,
 	CLOSURE,
+	OCLOSURE,
 
 	IDNODE, VALNODE,
 

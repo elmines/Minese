@@ -65,19 +65,20 @@ public class Evaluator {
 	}
 
 	private static Lexeme evalClassDef(Lexeme tree, Lexeme env) throws EnvException, EvalException {
-		Lexeme className = tree.car();
-		Lexeme statements = class2FuncBody(tree.cdr());
 
+		Lexeme def = tree.cdr();
+		Lexeme className = def.car();
+		Lexeme statements = class2FuncBody(def.cdr());
 		Lexeme funcBody = Lexeme.cons(Type.funcBody, null, statements);
-
 		Lexeme constructor = Lexeme.cons(Type.funcDef, className, funcBody);
-
 		Lexeme closure = Lexeme.cons(Type.CLOSURE, constructor, env);	
-						
 
-		Environment.insert(env, className, closure);
+		Lexeme parentName = tree.car();
+		Lexeme oClosure = Lexeme.cons(Type.OCLOSURE, parentName, closure);
 
-		return closure;
+		Environment.insert(env, className, oClosure);
+
+		return oClosure;
 
 	}
 	private static Lexeme class2FuncBody(Lexeme classBody) throws EvalException {
@@ -356,6 +357,42 @@ public class Evaluator {
 	}
 
 
+	public static ArrayList<Lexeme> getParentObjs(Lexeme parentId, Lexeme env) {
+		ArrayList<Lexeme> parentObjs = new ArrayList<>();
+		while (parentId != null) {
+			Lexeme parClosure = Environment.get(parentId);
+			assert(parClosure.type == Type.OCLOSURE);
+			parentId = parClosure.car();
+
+			Lexeme parObj = eval(parClosure, env);
+
+		}
+
+
+	}
+
+	public static Lexeme evalOClosure(Lexeme tree, Lexeme env) throws EnvException, EvalException {
+		Lexeme parentId = tree.car();
+		Lexeme closure = tree.cdr();
+
+		Lexeme childDefEnv = closure.cdr();
+		Lexeme childBody = getBody(closure);
+
+		Lexeme childEnv = Environment.newScope(childDefEnv, null, null);
+		Environment.insert(childEnv, Lexeme.literal(Type.IDENTIFIER, "this", -1), childEnv);
+
+		return evalFuncBody(childBody, childEnv);
+	}
+
+	public static Lexeme evalFuncBody(Lexeme body, Lexeme localEnv) throws EnvException, EvalException {
+		assert(body.type == Type.statements);
+		Lexeme result = eval(body, localEnv);
+		if (result.type == Type.RETURNVAL) return result.cdr();
+		else if (result.type == Type.NULL)       return result;
+
+		throw new EvalException("Invalid return Lexeme "+result.type);
+	}
+
 	/**
 	 * Evaluate a function call.
 	 * tree.type should be Type.funcCall (car's type is IDENTIFIER, cdr's type is exprList)
@@ -374,21 +411,13 @@ public class Evaluator {
 			closure = eval(id, env);
 		}
 
+		//args will be null in this case
+		if (closure.type == Type.OCLOSURE) return evalOClosure(closure, env);
 
 		Lexeme staticEnv = closure.cdr();
 		Lexeme formalParams = getParams(closure);
 
-		Lexeme localEnv = Environment.newScope(staticEnv, formalParams, args);
-		Environment.insert(localEnv, Lexeme.literal(Type.IDENTIFIER, "this", -1), localEnv);
-		Lexeme body = getBody(closure);
-
-		assert(body.type == Type.statements);
-
-		Lexeme result = eval(body, localEnv);
-		if (result.type == Type.RETURNVAL) return result.cdr();
-		else if (result.type == Type.NULL)       return result;
-
-		throw new EvalException("Invalid return Lexeme "+result.type);
+		return evalFuncBody(getBody(closure), Environment.newScope(staticEnv, formalParams, args));
 
 	}
 

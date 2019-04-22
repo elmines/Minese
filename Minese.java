@@ -30,7 +30,8 @@ public class Minese {
 
 		}
 		catch (Exception e) {
-			System.out.println(e.getMessage());
+			System.out.println(e);
+			//System.out.println(e.getMessage());
 			System.exit(1);
 		}
 
