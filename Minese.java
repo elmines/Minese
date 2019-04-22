@@ -31,10 +31,6 @@ public class Minese {
 		}
 		catch (Exception e) {
 			System.out.println(e.getMessage());
-			//e.printStackTrace(System.out);
-		}
-		catch (Throwable t) {
-			System.out.println(t.getMessage());
 			System.exit(1);
 		}
 
