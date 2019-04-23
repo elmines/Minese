@@ -2,7 +2,7 @@
 # CS503 - Lusth
 
 JVM=java
-COMP=javac
+COMP=javac -g
 OPTS=-Xlint
 
 run: Minese.class scriptText.txt
@@ -71,10 +71,16 @@ objects: objects.min
 objectsx: objects.min run
 	./run objects.min
 
-grad: grad.min
-	cat grad.min
-gradx: grad.min run
-	./run grad.min
+grad: extension reification variation
+
+gradx: extensionx reificationx variationx
+
+extension: extension.min
+	cat extension.min
+extensionx: extension.min run
+	./run extension.min
+
+
 
 #My extra tests
 args: args.min

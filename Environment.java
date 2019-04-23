@@ -13,7 +13,7 @@ public class Environment {
 	}
 
 	public static void rescopeClosures(Lexeme childObj, Lexeme parObj) {
-		Lexeme vals = parObject.caar();
+		Lexeme vals = parObj.cdar();
 
 		while (vals != null) {
 			Lexeme val = vals.car();

@@ -1,0 +1,66 @@
+class Magician {
+
+	var health = 100;
+
+	define takeDamage() {
+		health = health - 10;
+		return health;
+	}
+}
+
+class Healer extends Magician {
+
+	define cure() {
+		health = health + 10;
+		return health;
+	}
+
+}
+
+class MasterHealer extends Healer {
+
+	var level = 0;
+
+	define greatCure() {
+		var i = 0;
+		while (i < 3) {
+			health = health + level;
+			i = i + 1;
+		}
+		return health;
+	}
+
+	define levelUp(var inc) {
+		level = level + inc;
+		return level;
+	}
+
+	define sufferWound() {
+		var i = 0;
+		while (i < 5) {
+			takeDamage();
+			i = i + 1;
+		}	
+		return health;
+	}
+
+}
+
+
+define main() {
+
+	var jerry = Magician();
+	println("A goblin attacks jerry: ", jerry.takeDamage());
+
+	var simone = Healer();
+	println("A goblin attacks Simone: ", simone.takeDamage());
+	println("Simone heals herself: ", simone.cure());
+
+	var ethan = MasterHealer();
+	println("Ethan levels up from taking CS503: ", ethan.levelUp(20));
+	println("A goblin attacks Ethan: ", ethan.takeDamage());
+	println("Ethan heals himself: ", ethan.cure());
+	println("A beastie gravely wounds Ethan: ", ethan.sufferWound());
+	println("Ethan greatly heals himself: ", ethan.greatCure());
+	
+}
