@@ -50,14 +50,16 @@ class MasterHealer extends Healer {
 define main() {
 
 	var jerry = Magician();
-	println("A goblin attacks jerry: ", jerry.takeDamage());
+	println("A goblin attacks Jerry: ", jerry.takeDamage());
+	println();
 
 	var simone = Healer();
 	println("A goblin attacks Simone: ", simone.takeDamage());
 	println("Simone heals herself: ", simone.cure());
+	println();
 
 	var ethan = MasterHealer();
-	println("Ethan levels up from taking CS503: ", ethan.levelUp(20));
+	println("Ethan ascends to level ", ethan.levelUp(20), " after taking CS503.");
 	println("A goblin attacks Ethan: ", ethan.takeDamage());
 	println("Ethan heals himself: ", ethan.cure());
 	println("A beastie gravely wounds Ethan: ", ethan.sufferWound());
