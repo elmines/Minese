@@ -1,0 +1,75 @@
+
+class Employee {
+
+	var title = "Employee";
+	var name;
+
+	define role() {
+		return "contributes to the mission of the University of Alabama.";
+	}
+
+	define description() {
+		return title + " " + name + " " + role();
+	}
+
+}
+
+class Instructor extends Employee {
+	var title = "Instructor";
+	var classes = [];
+
+	define role() {
+		if (len(classes) < 1) return "does nothing.";
+
+		var buffer = "teaches " + get(classes, 0);
+		var i = 1;
+		while (i < len(classes)) {
+			buffer = buffer + ", ";
+			if (i == len(classes) - 1) buffer = buffer + "and ";
+ 			buffer = buffer + get(classes, i);
+			i = i + 1;
+		}
+		buffer = buffer + ".";
+		return buffer;
+	}
+
+
+}
+
+
+class Professor extends Instructor {
+	var researchArea = "";
+	var tenured = false;
+
+	define profTitle() {
+		if (tenured) return "Professor";
+		else         return "Associate Professor";
+	}
+
+	define description() {
+		var buffer = "";
+		buffer = buffer + profTitle() + " " + name + " " + role();
+		buffer = buffer + "
+";
+		buffer = buffer + "His/her/their primary area of research is " + researchArea + ".";
+		return buffer;
+	}
+}
+
+define main() {
+	var dave = Employee(); dave.name = "Dave";
+	println(dave.description());
+	println();
+
+	var evan = Instructor(); evan.name = "Evan"; evan.classes = ["MATH125", "MATH227", "MATH237"];
+	println(evan.description());
+	println();
+
+	var liem = Professor();
+	liem.name = "Vo T. Liem";
+	liem.tenured = true;
+	liem.classes = ["MATH126", "MATH301", "MATH302", "MATH486"];
+	liem.researchArea = "contact and symplectic manifolds";
+	println(liem.description());
+	
+}

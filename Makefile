@@ -2,14 +2,14 @@
 # CS503 - Lusth
 
 JVM=java
-COMP=javac -g
+COMP=javac
 OPTS=-Xlint
 
 run: Minese.class scriptText.txt
 	cp scriptText.txt run
 	chmod +x run
 
-test: error1x error2x error3x error4x error5x arraysx conditionalsx recursionx iterationx functionsx lambdax objectsx problemx
+test: error1x error2x error3x error4x error5x arraysx conditionalsx recursionx iterationx functionsx lambdax objectsx problemx gradx
 
 error1: error1.min
 	cat erro1.min
@@ -83,6 +83,10 @@ reification: reification.min
 	cat reification.min
 reificationx: reification.min run
 	./run reification.min
+variation: variation.min
+	cat variation.min
+variationx: variation.min run
+	./run variation.min
 
 
 
