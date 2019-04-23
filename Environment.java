@@ -12,6 +12,24 @@ public class Environment {
 
 	}
 
+	public static void rescopeClosures(Lexeme childObj, Lexeme parObj) {
+		Lexeme vals = parObject.caar();
+
+		while (vals != null) {
+			Lexeme val = vals.car();
+			if (val.type == Type.CLOSURE) val.setCdr(childObj);
+			vals = vals.cdr();
+		}
+
+	}
+
+	public static Lexeme getEnclosingScope(Lexeme env) { return env.cdr(); }
+	public static Lexeme setEnclosingScope(Lexeme env, Lexeme enclosing) {
+		Lexeme prev = getEnclosingScope(env);
+		env.setCdr(enclosing);
+		return prev;
+	}
+
 	/**
 	 * @return The inserted value
 	 */

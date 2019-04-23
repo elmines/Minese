@@ -359,29 +359,50 @@ public class Evaluator {
 
 	public static ArrayList<Lexeme> getParentObjs(Lexeme parentId, Lexeme env) {
 		ArrayList<Lexeme> parentObjs = new ArrayList<>();
-		while (parentId != null) {
-			Lexeme parClosure = Environment.get(parentId);
-			assert(parClosure.type == Type.OCLOSURE);
-			parentId = parClosure.car();
+		while (parentId.type != Type.NULL) {
+			Lexeme parOClosure = Environment.get(env, parentId);
 
-			Lexeme parObj = eval(parClosure, env);
+			env = Environment.newScope( getDefScope( parOClosure.cdr() ), null, null );
 
+			Lexeme parObject = Environment.newScope(env, null, null);
+			evalFuncBody(getBody(parOClosure.cdr()), parObject);
+
+			parentObjs.add(parObj);
+			parentId = parOClosure.car();
 		}
+		return parentObjs;
+	}
 
 
+
+	public static void rescope(Lexeme childObj, ArrayList<Lexeme> parentObjs) {
+		Lexeme root = parentObjs.get(parentObjs.size() - 1);
+		Lexeme childDefEnv = Environment.setEnclosingScope(childObj, Environment.getEnclosingScope(root));
+		Environment.setEnclosingScope(root, childDefEnv);
+
+		Lexeme prev = childObj;
+		for (Lexeme curr : parentObjs) {
+			Environment.setEnclosingScope(curr, prev);
+			rescopeClosures(childObj, curr);
+			prev = curr;
+		}
 	}
 
 	public static Lexeme evalOClosure(Lexeme tree, Lexeme env) throws EnvException, EvalException {
 		Lexeme parentId = tree.car();
-		Lexeme closure = tree.cdr();
+		Lexeme childClosure = tree.cdr();
 
 		Lexeme childDefEnv = closure.cdr();
-		Lexeme childBody = getBody(closure);
+		Lexeme childObj = Environment.newScope(childDefEnv, null, null);
+		Environment.insert(childObj, Lexeme.literal(Type.IDENTIFIER, "this", -1), childObj);
+		evalFuncBody(getBody(childClosure),childObj);
 
-		Lexeme childEnv = Environment.newScope(childDefEnv, null, null);
-		Environment.insert(childEnv, Lexeme.literal(Type.IDENTIFIER, "this", -1), childEnv);
 
-		return evalFuncBody(childBody, childEnv);
+		ArrayList<Lexeme> parentObjs = getParentObjs(parentId, env);
+		if (parentObjs.size() > 0) rescope(childObj, parentObjs);
+
+
+
 	}
 
 	public static Lexeme evalFuncBody(Lexeme body, Lexeme localEnv) throws EnvException, EvalException {
@@ -428,6 +449,8 @@ public class Evaluator {
 		Lexeme remaining = evalArgs(args.cdr(), env);
 		return Lexeme.cons(Type.VALNODE, arg, remaining);
 	}
+
+	private static Lexeme getDefScope(Lexeme closure) { return closure.cdr(); }
 
 	private static Lexeme getBody(Lexeme closure) throws EnvException, EvalException {
 		Lexeme funcDef = closure.car();
