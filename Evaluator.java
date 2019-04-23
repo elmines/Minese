@@ -106,6 +106,8 @@ public class Evaluator {
 		Lexeme root = parentObjs.get(parentObjs.size() - 1);
 		Environment.setEnclosingScope(root, Environment.getEnclosingScope(childObj));
 
+
+		Environment.rescopeClosures(childObj, root);
 		Lexeme prev = root;
 		for (int i = parentObjs.size() - 2; i >= 0; --i) {
 			Lexeme curr = parentObjs.get(i);

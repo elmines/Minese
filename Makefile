@@ -79,6 +79,10 @@ extension: extension.min
 	cat extension.min
 extensionx: extension.min run
 	./run extension.min
+reification: reification.min
+	cat reification.min
+reificationx: reification.min run
+	./run reification.min
 
 
 

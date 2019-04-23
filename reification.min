@@ -1,0 +1,42 @@
+
+class Device {
+
+	define summarize() {
+		println(getName());
+		println("Booting procedure:");
+		boot();
+	}
+}
+//Must define:
+// getName()
+// boot()
+
+class Phone extends Device {
+
+	define boot() {
+		println("	Screen comes on.");
+		displayLogo();
+	}
+}
+//Must define
+// getName
+// displayLogo
+
+
+class Galaxy extends Phone {
+	var name = "Samsung Galaxy";
+	var version;
+
+	define getName() { return name + " " + version; }
+
+	define displayLogo() {
+		println("	Samsung logo appears on screen.");
+	}
+}
+
+define main() {
+	var p = Galaxy();
+	p.version = "S3";
+
+	p.summarize();
+}
